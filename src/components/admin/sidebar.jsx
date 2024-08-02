@@ -1,4 +1,5 @@
 
+
 import { House, Users } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
@@ -19,7 +20,7 @@ const Sidebar = () => {
             <li className="px-4 py-2 hover:text-[#F19828]">
               <div className="flex flex-row">
                 <span className="mr-2"><House /></span>
-                <Link to="/manager">Dashboard</Link>
+                <Link to="/admin">Dashboard</Link>
               </div>
             </li>
             <li className="px-4 py-2 hover:text-[#F19828]">
@@ -30,14 +31,12 @@ const Sidebar = () => {
               </div>
               {teammateOpen && (
                 <ul className="ml-6 mt-2">
-                  <li className="px-4 py-2 hover:text-[#F19828]">
-                    <Link to="/manager-leaverequests">Leave Request</Link>
-                  </li>
+                  
                   <li className="px-4 py-2 hover:text-[#F19828]">
                     <Link to="/attendance">Attendance</Link>
                   </li>
                   <li className="px-4 py-2 hover:text-[#F19828]">
-                    <Link to="/manager-holidays">Holidays</Link>
+                    <Link to="/admin-holidays">Holidays</Link>
                   </li>
                 </ul>
               )}

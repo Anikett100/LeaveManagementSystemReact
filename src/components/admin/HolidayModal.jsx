@@ -1,8 +1,6 @@
-
-
 import React from "react";
 
-function Modal({ show, onClose, children }) {
+function HolidayModal({ show, onClose, children }) {
   if (!show) return null;
 
   const handleBackdropClick = (e) => {
@@ -25,7 +23,4 @@ function Modal({ show, onClose, children }) {
     </div>
   );
 }
-export default Modal;
-
-
-
+export default HolidayModal;

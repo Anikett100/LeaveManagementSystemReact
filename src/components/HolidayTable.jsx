@@ -51,9 +51,10 @@ export function HolidayTable() {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[200px]">Sr no</TableHead>
-            <TableHead>Holiday Day</TableHead>
-            <TableHead>Holiday Date</TableHead>
-            <TableHead>Holiday Name</TableHead>
+            <TableHead> Day</TableHead>
+            <TableHead> Date</TableHead>
+            <TableHead> Name</TableHead>
+            <TableHead> Type</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

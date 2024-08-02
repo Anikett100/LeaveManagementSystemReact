@@ -1,28 +1,87 @@
 
- import { BrowserRouter, Routes,Route } from 'react-router-dom';
-import './App.css';
-import Login from "./pages/Login";
-import Index from './pages/Index';
-import ManagerHoliday from './components/manager/ManagerHoliday'
-import ManagerLeaveRequests from './components/manager/ManagerLeaveRequests';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import LoginForm from './components/Login';
 import ManagerDashboard from './pages/ManagerDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import Index from './pages/Index';
+import PrivateRoute from './components/PrivateRoute';
 import UserHolidays from './components/user/UserHolidays';
-
-
-
+import AdminHoliday from './components/admin/AdminHoliday';
+import UserLeaveDetails from './components/user/UserLeaveDetails';
+import AdminLeaveDetails from './components/admin/AdminLeaveDetails';
+import ApplyLeave from './components/user/ApplyLeave';
 function App() {
   return (
-    <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Login />}/>
-      <Route path="/user" element={<Index />}/>
-      <Route path="/manager" element={<ManagerDashboard/>}/>
-      <Route path="/manager-holidays" element={<ManagerHoliday/>}/>
-      <Route path="/manager-leaverequests" element={<ManagerLeaveRequests/>}/>
-      <Route path="/user-holidays" element={<UserHolidays />}/>
-    </Routes>
-  </BrowserRouter>
-    
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginForm />} />
+        <Route 
+          path="/user" 
+          element={
+            <PrivateRoute allowedRoles={['user']}>
+              < Index />
+            </PrivateRoute>
+          } 
+        />
+        <Route path="/user-holidays"
+         element={
+          <PrivateRoute allowedRoles={['user']} >
+            <UserHolidays/> 
+          </PrivateRoute> 
+         }
+         />
+        <Route path="/leave-details/:id"
+         element={
+          <PrivateRoute allowedRoles={['user']} >
+            <UserLeaveDetails/> 
+          </PrivateRoute> 
+         }
+         />
+        <Route path="/apply-leave"
+         element={
+          <PrivateRoute allowedRoles={['user']} >
+            <ApplyLeave/> 
+          </PrivateRoute> 
+         }
+         />
+        <Route 
+          path="/manager" 
+          element={
+            <PrivateRoute allowedRoles={['manager']}>
+              <ManagerDashboard />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/admin" 
+          element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <AdminDashboard />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/admin-holidays" 
+          element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <AdminHoliday />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/admin-leavedetails/:id" 
+          element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <AdminLeaveDetails/>
+            </PrivateRoute>
+          } 
+        />
+          
+        <Route path="*" element={<Navigate to="/login" />} />
+      
+      </Routes>
+    </Router>
   );
 }
 
