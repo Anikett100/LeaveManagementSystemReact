@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import Header from './Header';
 import FullScreenCalendar from '../Calender';
@@ -8,9 +7,12 @@ import { CircleX } from 'lucide-react';
 import { MultiSelect } from "react-multi-select-component";
 import axios from 'axios';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 
 const ApplyLeave = () => {
   const [showForm, setShowForm] = useState(false);
+  const navigate = useNavigate();
   const [error, setError] = useState('');
   const [selected, setSelected] = useState([]);
   const [disableOptions, setDisableOptions] = useState(false);
@@ -28,28 +30,71 @@ const ApplyLeave = () => {
     end_date: '',
   });
 
+  // const handleSelectDate = (start, end) => {
+  //   const today = moment().startOf('day');
+  //   const startDate = moment(start);
+  //   const endDate = moment(end);
+  
+  //   if (startDate.day() === 6 || startDate.day() === 0 || endDate.day() === 6 || endDate.day() === 0) {
+  //     alert("You cannot select weekend days");
+  //     setError('Cannot select individual Saturdays or Sundays.');
+  //     return;
+  //   }
+
+  //   if (startDate.isBefore(today) || endDate.isBefore(today)) {
+  //     alert("You cannot select previous dates");
+  //     setError('Cannot select previous dates.');
+  //     return;
+  //   }
+  
+  //   const daterange = start === end ? start : `${start} to ${end}`;
+  //   const noofdays = endDate.diff(startDate, 'days') + 1;
+  
+  //   let isSandwich = false;
+  //   for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, 'days')) {
+  //     if (date.day() === 6 || date.day() === 0) {
+  //       isSandwich = true;
+  //       break;
+  //     }
+  //   }
+
+  //   const newLeaveType = noofdays > 1 ? 'Full Day' : formData.leavetype;
+  //   const disableOptions = noofdays > 1;
+  
+  //   setFormData({
+  //     ...formData,
+  //     daterange,
+  //     noofdays,
+  //     issandwich: isSandwich ? 'Yes' : 'No',
+  //     start_date: startDate.format('YYYY-MM-DD'),
+  //     end_date: endDate.format('YYYY-MM-DD'),
+  //     leavetype: newLeaveType,
+  //   });
+  //   setDisableOptions(disableOptions);
+  //   setShowForm(true);
+  // };
+  
+
   const handleSelectDate = (start, end) => {
     const today = moment().startOf('day');
     const startDate = moment(start);
     const endDate = moment(end);
   
-   
     if (startDate.day() === 6 || startDate.day() === 0 || endDate.day() === 6 || endDate.day() === 0) {
-      alert("you cannot select weekend days")
+      alert("You cannot select weekend days");
       setError('Cannot select individual Saturdays or Sundays.');
       return;
     }
-
   
-  
-   
     if (startDate.isBefore(today) || endDate.isBefore(today)) {
-      alert("you cannot select previous date  ")
+      alert("You cannot select previous dates");
       setError('Cannot select previous dates.');
       return;
     }
   
-    const daterange = start === end ? start : `${start} to ${end}`;
+    // const daterange = startDate.format('MMMM D') + (startDate.isSame(endDate) ? '' : ` to ${endDate.format('MMMM D')}`);
+    const daterange = startDate.format('MMMM D, YYYY') + (startDate.isSame(endDate) ? '' : ` to ${endDate.format('MMMM D, YYYY')}`);
+
     const noofdays = endDate.diff(startDate, 'days') + 1;
   
     let isSandwich = false;
@@ -59,7 +104,7 @@ const ApplyLeave = () => {
         break;
       }
     }
-
+  
     const newLeaveType = noofdays > 1 ? 'Full Day' : formData.leavetype;
     const disableOptions = noofdays > 1;
   
@@ -72,6 +117,7 @@ const ApplyLeave = () => {
       end_date: endDate.format('YYYY-MM-DD'),
       leavetype: newLeaveType,
     });
+    setDisableOptions(disableOptions);
     setShowForm(true);
   };
   
@@ -121,6 +167,7 @@ const ApplyLeave = () => {
       });
       alert('Leave request sent successfully');
       handleCloseModal();
+      navigate('/user'); 
     } catch (error) {
       setError('Error submitting leave request');
       console.error('Error:', error);
@@ -152,34 +199,6 @@ const ApplyLeave = () => {
 
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <select
-                  name="leavetype"
-                  value={formData.leavecategory}
-                  onChange={handleChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                >
-                  <option value="" disabled>Select Leave category</option>
-                  <option value="Sick Leave">Sick Leave</option>
-                  <option value="Casual Leave">Casual Leave</option>
-                  <option value="Annual Leave">Annual Leave</option>
-                </select>
-              </div>
-              <div className="mb-4">
-                <select
-                  name="leavecategory"
-                  value={formData.leavetype}
-                  onChange={handleChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                >
-                  <option value="" disabled>Select Leave Type</option>
-                  <option value="Full Day">Full Day</option>
-                  <option value="First Half" disabled={disableOptions}>First Half</option>
-                  <option value="Second Half" disabled={disableOptions}>Second Half</option>
-                  <option value="Short Leave" disabled={disableOptions}>Short Leave</option>
-                </select>
-              </div>
-
-              <div className="mb-4">
                 <input
                   type="text"
                   name="daterange"
@@ -189,7 +208,34 @@ const ApplyLeave = () => {
                   readOnly
                 />
               </div>
-
+              <div className="mb-4">
+                <select
+                  name="leavecategory"
+                  value={formData.leavecategory}
+                  onChange={handleChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                >
+                  <option value="" disabled>Select Leave category</option>
+                  <option value="Sick Leave">Sick Leave</option>
+                  <option value="Casual Leave">Casual Leave</option>
+                  <option value="Personal Leave">Personal Leave</option>
+                </select>
+              </div>
+              <div className="mb-4">
+                <select
+                  name="leavetype"
+                  value={formData.leavetype}
+                  onChange={handleChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  disabled={disableOptions}
+                >
+                  <option value="" disabled>Select Leave Type</option>
+                  <option value="Full Day">Full Day</option>
+                  <option value="First Half" disabled={disableOptions}>First Half</option>
+                  <option value="Second Half" disabled={disableOptions}>Second Half</option>
+                  <option value="Short Leave" disabled={disableOptions}>Short Leave</option>
+                </select>
+              </div>
               <div className="mb-4">
                 <MultiSelect
                   options={options}

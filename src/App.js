@@ -11,6 +11,7 @@ import AdminHoliday from './components/admin/AdminHoliday';
 import UserLeaveDetails from './components/user/UserLeaveDetails';
 import AdminLeaveDetails from './components/admin/AdminLeaveDetails';
 import ApplyLeave from './components/user/ApplyLeave';
+import UpdataeLeave from './components/user/UpdataeLeave';
 function App() {
   return (
     <Router>
@@ -42,6 +43,13 @@ function App() {
          element={
           <PrivateRoute allowedRoles={['user']} >
             <ApplyLeave/> 
+          </PrivateRoute> 
+         }
+         />
+        <Route path="/update-leave/:id"
+         element={
+          <PrivateRoute allowedRoles={['user']} >
+            <UpdataeLeave/> 
           </PrivateRoute> 
          }
          />
