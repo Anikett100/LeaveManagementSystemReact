@@ -12,6 +12,10 @@ import UserLeaveDetails from './components/user/UserLeaveDetails';
 import AdminLeaveDetails from './components/admin/AdminLeaveDetails';
 import ApplyLeave from './components/user/ApplyLeave';
 import UpdataeLeave from './components/user/UpdataeLeave';
+// import AddHoliday from './components/admin/AddHoliday';
+import Attendance from './components/admin/Attendance';
+import ManagerHoliday from './components/manager/ManagerHoliday';
+import ManagerLeaveRequests from './components/manager/ManagerLeaveRequests';
 function App() {
   return (
     <Router>
@@ -62,6 +66,22 @@ function App() {
           } 
         />
         <Route 
+          path="/manager-holidays" 
+          element={
+            <PrivateRoute allowedRoles={['manager']}>
+              <ManagerHoliday />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/manager-leaverequests" 
+          element={
+            <PrivateRoute allowedRoles={['manager']}>
+              <ManagerLeaveRequests/>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
           path="/admin" 
           element={
             <PrivateRoute allowedRoles={['admin']}>
@@ -82,6 +102,22 @@ function App() {
           element={
             <PrivateRoute allowedRoles={['admin']}>
               <AdminLeaveDetails/>
+            </PrivateRoute>
+          } 
+        />
+        {/* <Route 
+          path="/add-holiday" 
+          element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <AddHoliday/>
+            </PrivateRoute>
+          } 
+        /> */}
+        <Route 
+          path="/attendance" 
+          element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <Attendance/>
             </PrivateRoute>
           } 
         />

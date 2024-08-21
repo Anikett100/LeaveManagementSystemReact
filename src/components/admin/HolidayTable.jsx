@@ -1,54 +1,37 @@
-import { CircleX, CircleCheckBig, FilePenLine } from "lucide-react";
 
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/Table";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
 import HolidayModal from './HolidayModal';
 import { Button } from '../ui/Button';
 import FullScreenCalendar from "../Calender";
+import HolidayCalendarModal from './HolidayCalendarModal';
+import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "../ui/Table";
+import { Trash2, FilePenLine } from "lucide-react";
+import moment from "moment";
 
-
-
-
-
-
-export  default function HolidayTable() {
+export default function HolidayTable() {
   const [holidays, setHolidays] = useState([]);
   const [currentHoliday, setCurrentHoliday] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [dateField, setDateField] = useState(null);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [formData, setFormData] = useState({
-   day:"",
-   date:"",
-   name:"",
-   type:""
+    day: "",
+    date: "",
+    name: "",
+    type: "",
   });
-   
 
-  const handleCloseModal = () => {
-    setShowForm(false);
-  };
   const fetchHolidays = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/get-holiday");
       setHolidays(response.data);
-     
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
- 
-  
+
   const deleteHoliday = async (id) => {
     const confirmed = window.confirm("Are you sure you want to delete this holiday?");
     if (!confirmed) {
@@ -62,30 +45,25 @@ export  default function HolidayTable() {
       console.error("Error deleting holiday:", error);
     }
   };
-  useEffect(() => {
-    fetchHolidays();
-  }, []);
-
 
   const handleEditClick = (holiday) => {
     setCurrentHoliday(holiday);
     setFormData({
-      ...holiday,  
+      ...holiday,
     });
     setShowForm(true);
   };
-
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/update-leave/${currentHoliday.id}`,
+        `http://127.0.0.1:8000/api/update-holiday/${currentHoliday.id}`, 
         formData
       );
       setHolidays(
         holidays.map((holiday) =>
-          holiday.id === currentHoliday.id ? { ...formData } : holiday
+          holiday.id === currentHoliday.id ? { ...formData, id: currentHoliday.id } : holiday
         )
       );
       setShowForm(false);
@@ -96,31 +74,40 @@ export  default function HolidayTable() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevFormData) => {
-      const updatedFormData = {
-        ...prevFormData,
-        [name]: value,
-      };
-      return updatedFormData;
-    });
-  }; 
-  const handleOpenCalendar = (field) => {
-    setDateField(field);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
 
+  const handleOpenCalendar = (field) => {
+    setDateField(field);
+    setShowCalendar(true);
+  };
 
   const handleSelectDate = (date) => {
-    const formattedDate = date.toISOString().split("T")[0];
-    const dayOfWeek = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date);
-    setFormData((prevFormData) => {
-      const updatedFormData = {
-        ...prevFormData,
-        [dateField]: formattedDate,
-        day:dayOfWeek
-      };
-      return updatedFormData;
-    });
-    setShowCalendar(false);
+    const selectedDate = new Date(date);
+    const formattedDate = moment(selectedDate).format("MMMM D, YYYY");
+    const selectedDay = moment(selectedDate).format("dddd"); 
+  
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      date: formattedDate,
+      day: selectedDay,
+    }));
+  
+    setShowCalendarModal(false); 
+  };
+
+  useEffect(() => {
+    fetchHolidays();
+  }, []);
+  
+  const handleCloseModal = () => {
+    setShowForm(false);
+  };
+  const handleOpenCalendarModal = () => {
+    setShowCalendarModal(true);
   };
 
   return (
@@ -128,33 +115,36 @@ export  default function HolidayTable() {
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]">Sr no</TableHead>
-            <TableHead>From Day</TableHead>
-            <TableHead>From Date</TableHead>
-            <TableHead>Holiday Name</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Action</TableHead>
+            <TableHead className="text-black">Sr no</TableHead>
+            <TableHead className="text-black">Day</TableHead>
+            <TableHead className="text-black">Date</TableHead>
+            <TableHead className="text-black">Holiday Name</TableHead>
+            <TableHead className="text-black">Type</TableHead>
+            <TableHead className="text-black text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {holidays.map((holiday) => (
-            <TableRow key={holiday.SrNo}>
-              <TableCell className="font-medium">{holiday.id}</TableCell>
+          {holidays.map((holiday, index) => (
+            <TableRow
+              key={holiday.id}
+              className={`${holiday.type === "Holiday" ? "text-red-600" : "text-green-800"}`}
+            >
+              <TableCell>{index + 1}</TableCell>
               <TableCell>{holiday.day}</TableCell>
               <TableCell>{holiday.date}</TableCell>
               <TableCell>{holiday.name}</TableCell>
               <TableCell>{holiday.type}</TableCell>
               <TableCell>
-              <div className="flex justify-around">
+                <div className="flex justify-around">
                   <button
-                    className="rounded text-slate-600 transition"
-                     onClick={() => deleteHoliday(holiday.id)}
+                    className="rounded text-red-600 transition"
+                    onClick={() => deleteHoliday(holiday.id)}
                   >
-                    <CircleX />
+                    <Trash2 />
                   </button>
                   <button
-                    className="rounded text-black transition"
-                     onClick={() => handleEditClick(holiday)}
+                    className="rounded text-blue-600 transition"
+                    onClick={() => handleEditClick(holiday)}
                   >
                     <FilePenLine />
                   </button>
@@ -164,84 +154,86 @@ export  default function HolidayTable() {
           ))}
         </TableBody>
       </Table>
+
       {showForm && (
-         <HolidayModal show={showForm} onClose={handleCloseModal}>
-         <form className="bg-white p-4 rounded shadow-md" onSubmit={handleUpdate}>
-           <div className="mb-4">
-             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-               Holiday Name
-             </label>
-             <input
-               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-               id="name"
-               name="name"
-               type="text"
-               value={formData.name}
-               onChange={handleChange}
-               required
-             />
-           </div>
-           <div className="mb-4">
-             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="date">
-               Date
-             </label>
-             <input
-               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-               id="date"
-               name="date"
-               type=""
-               value={formData.date}
-               onChange={handleChange}
-               onClick={() => handleOpenCalendar("date")}
-               required
-             />
-             {dateField === "date" && (
-                <FullScreenCalendar
-                  onSelectDate={handleSelectDate}
-                  onClose={() => setDateField(null)}
-                />
-              )}
-           </div>
-           <div className="mb-4">
-             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="day">
-               Day
-             </label>
-             <input
-               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-               id="day"
-               name="day"
-               type="text"
-               value={formData.day}
-               onChange={handleChange}
-               required
-             />
-           </div>
-          
-           <div className="mb-4">
-             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
-               Type
-             </label>
-             <select
-               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-               id="type"
-               name="type"
-               value={formData.type}
-               onChange={handleChange}
-               required
-             >
-               <option value="">Select Type</option>
-               <option value="Holiday">Holiday</option>
-               <option value="Event">Event</option>
-             </select>
-           </div>
-           <div className="flex items-center justify-between">
-             <Button className="bg-[#484C7F] text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-               Submit
-             </Button>
-           </div>
-         </form>
-       </HolidayModal>
+        <HolidayModal show={showForm} onClose={handleCloseModal}>
+        <form className="bg-white p-6 rounded-lg shadow-lg" onSubmit={handleUpdate}>
+          <div className="mb-6">
+            <label className="block text-gray-800 text-sm font-semibold mb-2" htmlFor="name">
+              Holiday Name
+            </label>
+            <input
+              className="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Enter holiday name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-800 text-sm font-semibold mb-2" htmlFor="date">
+              Date
+            </label>
+            <input
+              className="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              id="date"
+              name="date"
+              type="text"
+              placeholder="Select date"
+              value={formData.date}
+              onClick={handleOpenCalendarModal}
+              readOnly
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-800 text-sm font-semibold mb-2" htmlFor="day">
+              Day
+            </label>
+            <input
+              className="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              id="day"
+              name="day"
+              type="text"
+              placeholder="Day of the week"
+              value={formData.day}
+              readOnly
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-800 text-sm font-semibold mb-2" htmlFor="type">
+              Type
+            </label>
+            <select
+              className="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-800 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Select Type</option>
+              <option value="Holiday">Holiday</option>
+              <option value="Event">Event</option>
+            </select>
+          </div>
+          <div className="flex justify-end">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" type="submit">
+              Submit
+            </Button>
+          </div>
+        </form>
+      </HolidayModal>
       )}
+       <HolidayCalendarModal 
+            isOpen={showCalendarModal}
+            onClose={() => setShowCalendarModal(false)}
+            onSelectDate={handleSelectDate}
+          />
     </div>
   );
 }

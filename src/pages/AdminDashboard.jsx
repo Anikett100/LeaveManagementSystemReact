@@ -12,9 +12,10 @@ export default function AdminDashboard() {
     <div className="flex flex-col flex-1">
       <Header/>
       <div className='container'>
-      <h1 className='text-3xl font-bold ml-3 mt-2 mb-1'>Leave Requests</h1>
-      </div>
+      <h1 className='text-3xl text-[#484C7F] font-bold ml-3 mt-2 mb-1'>Leave Requests</h1>
       <hr></hr>
+      </div>
+     
       <div className="p-4">
       <div className="container">
       </div>

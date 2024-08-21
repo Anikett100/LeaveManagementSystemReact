@@ -1,141 +1,102 @@
 
-import React, { useState } from 'react';
-import Header from './Header';
-import FullScreenCalendar from '../Calender';
-import Footer from './Footer';
-import { CircleX } from 'lucide-react';
+import React, { useState } from "react";
+import Header from "./Header";
+import FullScreenCalendar from "../Calender";
+import Footer from "./Footer";
+import { CircleX } from "lucide-react";
 import { MultiSelect } from "react-multi-select-component";
-import axios from 'axios';
-import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import axios from "axios";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const ApplyLeave = () => {
   const [showForm, setShowForm] = useState(false);
-  const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [selected, setSelected] = useState([]);
   const [disableOptions, setDisableOptions] = useState(false);
 
   const [formData, setFormData] = useState({
-    leavetype: '',
-    leavecategory: '',
+    leavetype: "",
+    leavecategory: "",
     cc: [],
-    reason: '',
-    daterange: '',
-    user_id: '',
-    issandwich: '',
-    noofdays: '',
-    start_date: '',
-    end_date: '',
+    reason: "",
+    daterange: "",
+    user_id: "",
+    issandwich: "",
+    noofdays: "",
   });
 
-  // const handleSelectDate = (start, end) => {
-  //   const today = moment().startOf('day');
-  //   const startDate = moment(start);
-  //   const endDate = moment(end);
-  
-  //   if (startDate.day() === 6 || startDate.day() === 0 || endDate.day() === 6 || endDate.day() === 0) {
-  //     alert("You cannot select weekend days");
-  //     setError('Cannot select individual Saturdays or Sundays.');
-  //     return;
-  //   }
+  const navigate = useNavigate();
 
-  //   if (startDate.isBefore(today) || endDate.isBefore(today)) {
-  //     alert("You cannot select previous dates");
-  //     setError('Cannot select previous dates.');
-  //     return;
-  //   }
-  
-  //   const daterange = start === end ? start : `${start} to ${end}`;
-  //   const noofdays = endDate.diff(startDate, 'days') + 1;
-  
-  //   let isSandwich = false;
-  //   for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, 'days')) {
-  //     if (date.day() === 6 || date.day() === 0) {
-  //       isSandwich = true;
-  //       break;
-  //     }
-  //   }
-
-  //   const newLeaveType = noofdays > 1 ? 'Full Day' : formData.leavetype;
-  //   const disableOptions = noofdays > 1;
-  
-  //   setFormData({
-  //     ...formData,
-  //     daterange,
-  //     noofdays,
-  //     issandwich: isSandwich ? 'Yes' : 'No',
-  //     start_date: startDate.format('YYYY-MM-DD'),
-  //     end_date: endDate.format('YYYY-MM-DD'),
-  //     leavetype: newLeaveType,
-  //   });
-  //   setDisableOptions(disableOptions);
-  //   setShowForm(true);
-  // };
-  
+  const handleCloseModal = () => {
+    setShowForm(false);
+    setFormData({
+      leavetype: "",
+      leavecategory: "",
+      cc: [],
+      reason: "",
+      daterange: "",
+      noofdays: "",
+      issandwich: "",
+      user_id: "",
+    });
+  };
 
   const handleSelectDate = (start, end) => {
-    const today = moment().startOf('day');
+    const today = moment().startOf("day");
     const startDate = moment(start);
     const endDate = moment(end);
-  
-    if (startDate.day() === 6 || startDate.day() === 0 || endDate.day() === 6 || endDate.day() === 0) {
+
+    if (
+      startDate.day() === 6 ||
+      startDate.day() === 0 ||
+      endDate.day() === 6 ||
+      endDate.day() === 0
+    ) {
       alert("You cannot select weekend days");
-      setError('Cannot select individual Saturdays or Sundays.');
+      setError("Cannot select individual Saturdays or Sundays.");
       return;
     }
-  
+
     if (startDate.isBefore(today) || endDate.isBefore(today)) {
       alert("You cannot select previous dates");
-      setError('Cannot select previous dates.');
+      setError("Cannot select previous dates.");
       return;
     }
-  
-    // const daterange = startDate.format('MMMM D') + (startDate.isSame(endDate) ? '' : ` to ${endDate.format('MMMM D')}`);
-    const daterange = startDate.format('MMMM D, YYYY') + (startDate.isSame(endDate) ? '' : ` to ${endDate.format('MMMM D, YYYY')}`);
 
-    const noofdays = endDate.diff(startDate, 'days') + 1;
-  
+    const daterange =
+      startDate.format("MMMM D, YYYY") +
+      (startDate.isSame(endDate)
+        ? ""
+        : ` to ${endDate.format("MMMM D, YYYY")}`);
+    const noofdays = endDate.diff(startDate, "days") + 1;
+
     let isSandwich = false;
-    for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, 'days')) {
+    for (
+      let date = startDate.clone();
+      date.isSameOrBefore(endDate);
+      date.add(1, "days")
+    ) {
       if (date.day() === 6 || date.day() === 0) {
         isSandwich = true;
         break;
       }
     }
-  
-    const newLeaveType = noofdays > 1 ? 'Full Day' : formData.leavetype;
+
+    const newLeaveType = noofdays > 1 ? "Full Day" : formData.leavetype;
     const disableOptions = noofdays > 1;
-  
+
     setFormData({
       ...formData,
       daterange,
+      fromdate: startDate.format("MMMM D, YYYY"),
+      todate: endDate.format("MMMM D, YYYY"),
       noofdays,
-      issandwich: isSandwich ? 'Yes' : 'No',
-      start_date: startDate.format('YYYY-MM-DD'),
-      end_date: endDate.format('YYYY-MM-DD'),
+      issandwich: isSandwich ? "Yes" : "No",
       leavetype: newLeaveType,
     });
     setDisableOptions(disableOptions);
     setShowForm(true);
-  };
-  
-
-  const handleCloseModal = () => {
-    setShowForm(false);
-    setFormData({
-      leavetype: '',
-      leavecategory: '',
-      cc: [],
-      reason: '',
-      daterange: '',
-      noofdays: '',
-      issandwich: '',
-      user_id: '',
-      start_date: '',
-      end_date: '',
-    });
   };
 
   const handleChange = (e) => {
@@ -146,31 +107,56 @@ const ApplyLeave = () => {
     setSelected(selectedOptions);
     setFormData((prevFormData) => ({
       ...prevFormData,
-      cc: selectedOptions.map(option => option.value),
+      cc: selectedOptions.map((option) => option.value),
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userId = localStorage.getItem('user_id');
-    const authToken = localStorage.getItem('token');
+    const userId = localStorage.getItem("user_id");
+    const authToken = localStorage.getItem("token");
     const leaveData = {
       ...formData,
       user_id: userId,
+      fromdate: formData.fromdate,
+      todate: formData.todate,
     };
 
+   
+    const previousFormData = { ...formData };
+    setFormData({
+      ...formData,
+      leavetype: "",
+      leavecategory: "",
+      cc: [],
+      reason: "",
+      daterange: "",
+      noofdays: "",
+      issandwich: "",
+      user_id: "",
+    });
+
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/add-leave', leaveData, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
-      alert('Leave request sent successfully');
-      handleCloseModal();
-      navigate('/user'); 
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/add-leave",
+        leaveData,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        alert("Leave request sent successfully");
+        navigate("/user"); 
+      } else {
+        setError("Error submitting leave request");
+        setFormData(previousFormData);
+      }
     } catch (error) {
-      setError('Error submitting leave request');
-      console.error('Error:', error);
+      setError("Error submitting leave request");
+      console.error("Error:", error);
+      setFormData(previousFormData);
     }
   };
 
@@ -215,7 +201,9 @@ const ApplyLeave = () => {
                   onChange={handleChange}
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
-                  <option value="" disabled>Select Leave category</option>
+                  <option value="" disabled>
+                    Select Leave category
+                  </option>
                   <option value="Sick Leave">Sick Leave</option>
                   <option value="Casual Leave">Casual Leave</option>
                   <option value="Personal Leave">Personal Leave</option>
@@ -229,11 +217,19 @@ const ApplyLeave = () => {
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   disabled={disableOptions}
                 >
-                  <option value="" disabled>Select Leave Type</option>
+                  <option value="" disabled>
+                    Select Leave Type
+                  </option>
                   <option value="Full Day">Full Day</option>
-                  <option value="First Half" disabled={disableOptions}>First Half</option>
-                  <option value="Second Half" disabled={disableOptions}>Second Half</option>
-                  <option value="Short Leave" disabled={disableOptions}>Short Leave</option>
+                  <option value="First Half" disabled={disableOptions}>
+                    First Half
+                  </option>
+                  <option value="Second Half" disabled={disableOptions}>
+                    Second Half
+                  </option>
+                  <option value="Short Leave" disabled={disableOptions}>
+                    Short Leave
+                  </option>
                 </select>
               </div>
               <div className="mb-4">
@@ -244,14 +240,13 @@ const ApplyLeave = () => {
                   labelledBy="Select"
                 />
               </div>
-
               <div className="mb-4">
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="noofdays"
                   name="noofdays"
                   type="text"
-                  placeholder='Number of days'
+                  placeholder="Number of days"
                   value={formData.noofdays}
                   readOnly
                 />
@@ -262,7 +257,7 @@ const ApplyLeave = () => {
                   id="issandwich"
                   name="issandwich"
                   type="text"
-                  placeholder='Sandwich Leave?'
+                  placeholder="Sandwich Leave?"
                   value={formData.issandwich}
                   readOnly
                 />
@@ -276,6 +271,7 @@ const ApplyLeave = () => {
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
               </div>
+
               <div className="flex justify-end mt-4">
                 <button
                   type="button"

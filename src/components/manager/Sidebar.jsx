@@ -34,7 +34,7 @@ const Sidebar = () => {
                     <Link to="/manager-leaverequests">Leave Request</Link>
                   </li>
                   <li className="px-4 py-2 hover:text-[#F19828]">
-                    <Link to="/attendance">Attendance</Link>
+                    <Link to="/manager-attendance">Attendance</Link>
                   </li>
                   <li className="px-4 py-2 hover:text-[#F19828]">
                     <Link to="/manager-holidays">Holidays</Link>

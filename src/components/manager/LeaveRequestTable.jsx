@@ -122,7 +122,7 @@ import {
         <CircleX />
       </button>
       <button className="bg-green-500 rounded text-white transition">
-        <CircleCheckBig />
+        <CircleCheckBig/>
       </button>
     </div>
     },
@@ -158,7 +158,6 @@ import {
               <TableCell className="">{leave.NoOfDays}</TableCell>
               <TableCell className="">{leave.Reason}</TableCell>
               <TableCell className="">{leave.Action}</TableCell>
-             
             </TableRow>
           ))}
         </TableBody>

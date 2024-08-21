@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import FullScreenCalendar from '../Calender';
@@ -25,6 +26,8 @@ function UpdateLeave() {
     user_id: '',
     issandwich: '',
     noofdays: '',
+    fromdate: '',
+    todate: '',
     
   });
 
@@ -39,27 +42,35 @@ function UpdateLeave() {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/get-userleave/${id}`);
         const leaveData = response.data;
+  
+        const daterange = moment(leaveData.fromdate).format('MMMM D, YYYY') + 
+                          (leaveData.fromdate === leaveData.todate 
+                            ? '' 
+                            : ` to ${moment(leaveData.todate).format('MMMM D, YYYY')}`);
+  
         setFormData({
           leavetype: leaveData.leavetype,
           leavecategory: leaveData.leavecategory,
           cc: leaveData.cc,
           reason: leaveData.reason,
-          daterange: leaveData.daterange,
+          daterange: daterange,
+          fromdate: leaveData.fromdate,
+          todate: leaveData.todate,
           user_id: leaveData.user_id,
           issandwich: leaveData.issandwich,
           noofdays: leaveData.noofdays,
-       
         });
-        setSelected(leaveData.cc.map(email => ({ label: email, value: email })));
+  
         const disableOptions = leaveData.noofdays > 1;
         setDisableOptions(disableOptions);
       } catch (error) {
         console.error('Error fetching leave data:', error);
       }
     };
-
+  
     fetchLeaveData();
   }, [id]);
+  
 
   const handleChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -101,27 +112,28 @@ function UpdateLeave() {
     }
   };
 
+
   const handleSelectDate = (start, end) => {
     const today = moment().startOf('day');
     const startDate = moment(start);
     const endDate = moment(end);
-
+  
     if (startDate.day() === 6 || startDate.day() === 0 || endDate.day() === 6 || endDate.day() === 0) {
       alert('You cannot select weekend days');
       setError('Cannot select individual Saturdays or Sundays.');
       return;
     }
-
+  
     if (startDate.isBefore(today) || endDate.isBefore(today)) {
       alert('You cannot select previous dates');
       setError('Cannot select previous dates.');
       return;
     }
-
-    // const daterange = start === end ? start : `${start} to ${end}`;
-    const daterange = startDate.format('MMMM D, YYYY') + (startDate.isSame(endDate) ? '' : ` to ${endDate.format('MMMM D, YYYY')}`);
+  
+    const daterange = startDate.format('MMMM D, YYYY') + 
+                      (startDate.isSame(endDate) ? '' : ` to ${endDate.format('MMMM D, YYYY')}`);
     const noofdays = endDate.diff(startDate, 'days') + 1;
-
+  
     let isSandwich = false;
     for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, 'days')) {
       if (date.day() === 6 || date.day() === 0) {
@@ -129,21 +141,24 @@ function UpdateLeave() {
         break;
       }
     }
-
+  
     const newLeaveType = noofdays > 1 ? 'Full Day' : formData.leavetype;
     const disableOptions = noofdays > 1;
-
+  
     setFormData(prevFormData => ({
       ...prevFormData,
-      daterange,
+      daterange: daterange,
+      fromdate: startDate.format('MMMM D, YYYY'),
+      todate: endDate.format('MMMM D, YYYY'),
       noofdays,
       issandwich: isSandwich ? 'Yes' : 'No',
-     
       leavetype: newLeaveType,
     }));
     setShowForm(true);
     setDisableOptions(disableOptions);
   };
+  
+  
 
   return (
     <>
@@ -185,7 +200,7 @@ function UpdateLeave() {
                   </option>
                   <option value="Sick Leave">Sick Leave</option>
                   <option value="Casual Leave">Casual Leave</option>
-                  <option value="Annual Leave">Annual Leave</option>
+                  <option value="Personal Leave">Personal Leave</option>
                 </select>
               </div>
               <div className="mb-4">
@@ -276,3 +291,8 @@ function UpdateLeave() {
 }
 
 export default UpdateLeave;
+
+
+
+
+

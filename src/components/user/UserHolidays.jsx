@@ -7,7 +7,7 @@ function UserHolidays() {
   return (
     <>
     <Header/>
-    <div className=' container mt-6'>
+    <div className='container mt-28'>
     <HolidayTable/>
     </div>
     <Footer/>

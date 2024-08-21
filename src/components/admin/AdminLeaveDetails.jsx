@@ -1,7 +1,7 @@
+
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; 
-
 
 import Header from './Header';
 import Sidebar from './sidebar';
@@ -30,77 +30,70 @@ function AdminLeaveDetails() {
   }, [id]); 
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen text-lg font-semibold text-gray-600">Loading...</div>;
   }
 
   if (error) {
-    return <div className="flex justify-center items-center h-screen">Error loading leave details</div>;
+    return <div className="flex justify-center items-center h-screen text-lg font-semibold text-red-600">Error loading leave details</div>;
   }
 
   if (!leave) {
-    return <div className="flex justify-center items-center h-screen">No leave details found</div>;
+    return <div className="flex justify-center items-center h-screen text-lg font-semibold text-gray-600">No leave details found</div>;
   }
 
   return (
     <>
-     
-       <div className="flex">
-    <Sidebar/>
-    <div className="flex flex-col flex-1">
-      <Header/>
-      <div className='container'>
-      <h1 className='text-3xl font-bold ml-3 mt-2 mb-1'>Leave Details</h1>
-      </div>
-      <hr></hr>
-      <div className="p-4">
-      <div className="container">
-      </div>
-      <div className="container">
-      <div className="container mx-auto my-8 p-6 m">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="flex flex-col">
-            <p className="font-semibold">Leave Type:</p>
-            <p className="text-gray-700 mt-1">{leave.leavetype}</p>
+      <div className="flex h-screen">
+        <Sidebar />
+        <div className="flex flex-col flex-1 min-h-screen">
+          <Header />
+          <div className="flex-1 overflow-y-auto">
+            <div className="container mx-auto mb-8 p-6 bg-white shadow-lg rounded-lg">
+              <h1 className="text-4xl font-bold mb-8 text-center text-purple-600">Leave Details</h1>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800">Leave Type:</p>
+                  <p className="text-gray-600 mt-1">{leave.leavetype}</p>
+                </div>
+                <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800">Leave Category:</p>
+                  <p className="text-gray-600 mt-1">{leave.leavecategory}</p>
+                </div>
+                <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800">Sandwich Leave:</p>
+                  <p className="text-gray-600 mt-1">{leave.issandwich}</p>
+                </div>
+                <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800">From Date:</p>
+                  <p className="text-gray-600 mt-1">{leave.fromdate}</p>
+                </div>
+                <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800">To Date:</p>
+                  <p className="text-gray-600 mt-1">{leave.todate}</p>
+                </div>
+                <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800">Number of Days:</p>
+                  <p className="text-gray-600 mt-1">{leave.noofdays}</p>
+                </div>
+                <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800">Reason:</p>
+                  <p className="text-gray-600 mt-1">{leave.reason}</p>
+                </div>
+                <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800">Status:</p>
+                  <p className="text-gray-600 mt-1">{leave.status}</p>
+                </div>
+                <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
+                  <p className="font-semibold text-gray-800">Action Reason:</p>
+                  <p className="text-gray-600 mt-1">{leave.actionreason}</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <p className="font-semibold">Leave Category:</p>
-            <p className="text-gray-700 mt-1">{leave.leavecategory}</p>
-          </div>
-          <div className="flex flex-col">
-            <p className="font-semibold">Sandwich Leave:</p>
-            <p className="text-gray-700 mt-1">{leave.issandwich ? 'Yes' : 'No'}</p>
-          </div>
-          <div className="flex flex-col">
-            <p className="font-semibold">From Date:</p>
-            <p className="text-gray-700 mt-1">{leave.fromdate}</p>
-          </div>
-          <div className="flex flex-col">
-            <p className="font-semibold">To Date:</p>
-            <p className="text-gray-700 mt-1">{leave.todate}</p>
-          </div>
-          <div className="flex flex-col">
-            <p className="font-semibold">Number of Days:</p>
-            <p className="text-gray-700 mt-1">{leave.noofdays}</p>
-          </div>
-          <div className="flex flex-col">
-            <p className="font-semibold">Reason:</p>
-            <p className="text-gray-700 mt-1">{leave.reason}</p>
-          </div>
-          <div className="flex flex-col">
-            <p className="font-semibold">Status:</p>
-            <p className="text-gray-700 mt-1">{leave.status}</p>
-          </div>
-          <div className="flex flex-col">
-            <p className="font-semibold">Action Reason:</p>
-            <p className="text-gray-700 mt-1">{leave.actionreason}</p>
-          </div>
+      
         </div>
       </div>
-      </div>
-      </div>
-    </div>
-  </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }
