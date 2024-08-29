@@ -1,11 +1,8 @@
-
-
-
-
 import { Eye, EyeOff } from 'lucide-react';  
 import React, { useState } from 'react';
 import axios from 'axios'; 
 import { useNavigate } from 'react-router-dom';
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({
@@ -29,7 +26,7 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login', formData);
+      const response = await axios.post(`${baseURL}/login`, formData);
       const { access_token,role,user_id } = response.data;
       localStorage.setItem('token', access_token);
       localStorage.setItem('role', role);

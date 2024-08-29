@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Header from "./Header";
 import FullScreenCalendar from "../Calender";
@@ -8,6 +7,7 @@ import { MultiSelect } from "react-multi-select-component";
 import axios from "axios";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const ApplyLeave = () => {
   const [showForm, setShowForm] = useState(false);
@@ -42,9 +42,9 @@ const ApplyLeave = () => {
     });
   };
 
-  const handleSelectDate = (start, end) => {
+  const handleSelectDate = async (start, end) => {
     const today = moment().startOf("day");
-    const startDate = moment(start);
+    let startDate = moment(start);
     const endDate = moment(end);
 
     if (
@@ -64,44 +64,105 @@ const ApplyLeave = () => {
       return;
     }
 
-    const daterange =
-      startDate.format("MMMM D, YYYY") +
-      (startDate.isSame(endDate)
-        ? ""
-        : ` to ${endDate.format("MMMM D, YYYY")}`);
-    const noofdays = endDate.diff(startDate, "days") + 1;
+    const authToken = localStorage.getItem("token");
+    let isFridayLeaveApproved = false;
 
-    let isSandwich = false;
-    for (
-      let date = startDate.clone();
-      date.isSameOrBefore(endDate);
-      date.add(1, "days")
-    ) {
-      if (date.day() === 6 || date.day() === 0) {
-        isSandwich = true;
-        break;
+    try {
+      const response = await axios.get(`${baseURL}/get-leaves`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      const existingLeaves = response.data.leaves;
+      console.log("Existing Leaves:", existingLeaves);
+
+      if (startDate.day() === 1) {
+        const prevFriday = startDate.clone().subtract(3, "days");
+        console.log("Previous Friday:", prevFriday.format("MMMM D, YYYY"));
+
+        const fridayLeave = existingLeaves.find(
+          (leave) =>
+            moment(leave.todate).isSame(prevFriday, "day") &&
+            leave.status === "Approved" &&
+            leave.leavetype === "Full Day"
+        );
+
+        if (fridayLeave) {
+          isFridayLeaveApproved = true;
+        }
       }
+    } catch (error) {
+      console.error("Error fetching user leaves:", error);
     }
 
-    const newLeaveType = noofdays > 1 ? "Full Day" : formData.leavetype;
-    const disableOptions = noofdays > 1;
-
-    setFormData({
-      ...formData,
-      daterange,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
+        "MMMM D, YYYY"
+      )}`,
       fromdate: startDate.format("MMMM D, YYYY"),
       todate: endDate.format("MMMM D, YYYY"),
-      noofdays,
-      issandwich: isSandwich ? "Yes" : "No",
-      leavetype: newLeaveType,
-    });
-    setDisableOptions(disableOptions);
+      noofdays: endDate.diff(startDate, "days") + 1,
+      isFridayLeaveApproved,
+    }));
     setShowForm(true);
   };
 
+ 
+
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    if (name === "leavetype" || name === "fromdate" || name === "todate") {
+      const startDate = moment(formData.fromdate, "MMMM D, YYYY");
+      const endDate = moment(formData.todate, "MMMM D, YYYY");
+  
+      let isSandwich = false;
+      let numOfDays = endDate.diff(startDate, "days") + 1;
+      let leaveType = value;
+  
+      if (name === "leavetype") {
+       
+        if (leaveType === "Full Day") {
+          for (
+            let date = startDate.clone();
+            date.isSameOrBefore(endDate);
+            date.add(1, "days")
+          ) {
+            if (date.day() === 6 || date.day() === 0) {
+              isSandwich = true;
+              setDisableOptions(true);
+              break;
+            }
+          }
+  
+          if (
+            startDate.day() === 1 &&
+            formData.isFridayLeaveApproved
+          ) {
+            isSandwich = true;
+            numOfDays += 2; 
+          }
+        }
+      }
+  
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        leavetype: leaveType,
+        issandwich: isSandwich ? "Yes" : "No",
+        noofdays: numOfDays,
+      }));
+    } else {
+      
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
   };
+  
 
   const handleSelectChange = (selectedOptions) => {
     setSelected(selectedOptions);
@@ -122,7 +183,6 @@ const ApplyLeave = () => {
       todate: formData.todate,
     };
 
-   
     const previousFormData = { ...formData };
     setFormData({
       ...formData,
@@ -137,18 +197,14 @@ const ApplyLeave = () => {
     });
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/add-leave",
-        leaveData,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
+      const response = await axios.post(`${baseURL}/add-leave`, leaveData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
       if (response.status === 200) {
         alert("Leave request sent successfully");
-        navigate("/user"); 
+        navigate("/user");
       } else {
         setError("Error submitting leave request");
         setFormData(previousFormData);
@@ -232,6 +288,7 @@ const ApplyLeave = () => {
                   </option>
                 </select>
               </div>
+
               <div className="mb-4">
                 <MultiSelect
                   options={options}
@@ -296,3 +353,7 @@ const ApplyLeave = () => {
 };
 
 export default ApplyLeave;
+
+
+
+

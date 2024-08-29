@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { CircleX, FilePenLine } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+
 import {
   Table,
   TableBody,
@@ -13,35 +13,32 @@ import {
 } from "../ui/Table";
 
 const ITEMS_PER_PAGE = 4; 
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 export function TableDemo() {
   const [leaves, setLeaves] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-
   const fetchLeaves = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/get-leave", {
+      const response = await axios.get(`${baseURL}/get-leave`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}` 
         }
       });
-      console.log("API Response:", response.data);
-      setLeaves(response.data.filter(leave => leave.id !== null));
+      setLeaves(response.data.filter(leaves => leaves.id !== null));
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
-  
+
   const deleteLeave = async (id) => {
     const confirmed = window.confirm("Are you sure you want to delete this leave?");
     if (!confirmed) {
       return;
     }
-  
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/delete-leave/${id}`);
+      await axios.delete(`${baseURL}/delete-leave/${id}`);
       setLeaves(leaves.filter((leave) => leave.id !== id));
     } catch (error) {
       if (error.response && error.response.status === 403) {
@@ -52,7 +49,7 @@ export function TableDemo() {
       }
     }
   };
-  
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
@@ -77,7 +74,7 @@ export function TableDemo() {
             <TableHead className="text-black">Leave type</TableHead>
             <TableHead className="text-black">Leave category</TableHead>
             <TableHead className="text-black">Is sandwich</TableHead>
-            <TableHead className="text-black"> From Date</TableHead>
+            <TableHead className="text-black">From Date</TableHead>
             <TableHead className="text-black">To Date</TableHead>
             <TableHead className="text-black">No of Days</TableHead>
             <TableHead className="text-black">Status</TableHead>
@@ -87,13 +84,15 @@ export function TableDemo() {
         </TableHeader>
         <TableBody>
           {currentItems.map((leave, index) => (
-            <TableRow key={index}
-            className={`
-              ${leave.status === "Approved" ? "text-green-800" : 
-               leave.status === "Cancelled" ? "text-red-600" : 
-               leave.status === "pending" ? "text-yellow-600" : 
-               "text-gray-500"}
-            `}>
+            <TableRow
+              key={index}
+              className={`
+                ${leave.status === "Approved" ? "text-green-800" : 
+                 leave.status === "Cancelled" ? "text-red-600" : 
+                 leave.status === "pending" ? "text-yellow-600" : 
+                 "text-gray-500"}
+              `}
+            >
               <TableCell>{leave.id}</TableCell>
               <TableCell>{leave.leavetype}</TableCell>
               <TableCell>{leave.leavecategory}</TableCell>
@@ -108,13 +107,17 @@ export function TableDemo() {
               <TableCell>
                 <div className="flex justify-around">
                   <button
-                    className="rounded text-red-600 transition"
+                    className={`rounded text-red-600 transition ${leave.status === "Approved" ? "opacity-50 cursor-not-allowed" : ""}`}
                     onClick={() => deleteLeave(leave.id)}
+                    disabled={leave.status === "Approved"}
                   >
                     <CircleX />
                   </button>
                   <Link to={`/update-leave/${leave.id}`}>
-                    <button className="rounded text-blue-600 transition">
+                    <button
+                      className={`rounded text-blue-600 transition ${leave.status === "Approved" ? "opacity-50 cursor-not-allowed" : ""}`}
+                      disabled={leave.status === "Approved"}
+                    >
                       <FilePenLine />
                     </button>
                   </Link>

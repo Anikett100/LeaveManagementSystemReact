@@ -8,6 +8,7 @@ import HolidayCalendarModal from './HolidayCalendarModal';
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "../ui/Table";
 import { Trash2, FilePenLine } from "lucide-react";
 import moment from "moment";
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 export default function HolidayTable() {
   const [holidays, setHolidays] = useState([]);
@@ -25,7 +26,7 @@ export default function HolidayTable() {
 
   const fetchHolidays = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/get-holiday");
+      const response = await axios.get(`${baseURL}/get-holiday`);
       setHolidays(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -38,7 +39,7 @@ export default function HolidayTable() {
       return;
     }
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/delete-holiday/${id}`);
+      await axios.delete(`${baseURL}/delete-holiday/${id}`);
       setHolidays(holidays.filter((holiday) => holiday.id !== id));
       fetchHolidays();
     } catch (error) {
@@ -58,7 +59,7 @@ export default function HolidayTable() {
     e.preventDefault();
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/update-holiday/${currentHoliday.id}`, 
+        `${baseURL}/update-holiday/${currentHoliday.id}`, 
         formData
       );
       setHolidays(

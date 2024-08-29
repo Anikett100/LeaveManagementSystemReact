@@ -22,11 +22,11 @@ const Sidebar = () => {
                 <Link to="/manager">Dashboard</Link>
               </div>
             </li>
-            <li className="px-4 py-2 hover:text-[#F19828]">
+            <li className="px-4 py-2 ">
               <div className="flex flex-row cursor-pointer" onClick={handleTeammateToggle}>
                 <span className="">  </span>
                 <span className="mr-2"><Users /></span>
-                <span>Teammate</span>
+                <span className='hover:text-[#F19828]'>Teammate</span>
               </div>
               {teammateOpen && (
                 <ul className="ml-6 mt-2">

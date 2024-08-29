@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import Sidebar from './sidebar';
 import Header from './Header';
@@ -11,6 +9,7 @@ import axios from "axios";
 import HolidayTable from "./HolidayTable";
 import HolidayCalendarModal from './HolidayCalendarModal';
 import moment from "moment";
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 function AdminHoliday() {
   const [showForm, setShowForm] = useState(false);
@@ -39,7 +38,7 @@ function AdminHoliday() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post('http://127.0.0.1:8000/api/add-holiday', formData);
+    const response = await axios.post(`${baseURL}/add-holiday`, formData);
     console.log(response.data);
     setShowForm(false);
   };

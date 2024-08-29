@@ -1,11 +1,10 @@
-
-// import React from 'react';
+// import React, { useState, useEffect } from 'react';
 // import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 // import { format, parse, startOfWeek, getDay } from 'date-fns';
 // import enUS from 'date-fns/locale/en-US';
-// import 'react-big-calendar/lib/css/react-big-calendar.css';
-// import { CircleX } from 'lucide-react';
 // import axios from 'axios';
+// import 'react-big-calendar/lib/css/react-big-calendar.css';
+// const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 // const locales = {
 //   'en-US': enUS,
@@ -19,36 +18,41 @@
 //   locales,
 // });
 
-// const createDate = (year, month, day) => {
-//   return new Date(year, month - 1, day);
-// };
-
-// const events = [
-//   {
-//     title: 'Meeting with Team',
-//     start: createDate(2024, 7, 20),
-//     end: createDate(2024, 7, 20),
-//   },
-//   {
-//     title: 'Project Deadline',
-//     start: createDate(2024, 7, 22),
-//     end: createDate(2024, 7, 22),
-//   },
-// ];
-
-// const holidays = [
-//   {
-//     title: 'Ashadhi Ekadashi',
-//     start: createDate(2024, 7, 23),
-//     end: createDate(2024, 7, 23),
-//   },
-// ];
-
-
-
-// const combinedEvents = [...events, ...holidays];
-
 // const FullScreenCalendar = ({ onSelectDate }) => {
+//   const [holidays, setHolidays] = useState([]);
+//   const [events, setEvents] = useState([]);
+
+//   useEffect(() => {
+//     const fetchHolidaysAndEvents = async () => {
+//       try {
+//         const response = await axios.get(`${baseURL}/holidays-events`);
+//         const data = response.data.holidays;
+
+//         const holidays = data.filter(item => item.type === 'Holiday').map(item => ({
+//           title: item.name,
+//           start: new Date(item.date),
+//           end: new Date(item.date),
+          
+//         }));
+
+//         const events = data.filter(item => item.type === 'Event').map(item => ({
+//           title: item.name,
+//           start: new Date(item.date),
+//           end: new Date(item.date),
+//         }));
+         
+//         setHolidays(holidays);
+//         setEvents(events);
+//       } catch (error) {
+//         console.error("Error fetching data:", error);
+//       }
+//     };
+
+//     fetchHolidaysAndEvents();
+//   }, []);
+
+//   const combinedEvents = [...events, ...holidays];
+
 //   const handleSelectSlot = ({ start, end }) => {
 //     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
 //     const formattedStart = start.toLocaleDateString('en-CA', options);
@@ -103,7 +107,6 @@
 //     </div>
 //   );
 // };
-
 // export default FullScreenCalendar;
 
 
@@ -118,6 +121,8 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import enUS from 'date-fns/locale/en-US';
 import axios from 'axios';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const locales = {
   'en-US': enUS,
@@ -138,14 +143,13 @@ const FullScreenCalendar = ({ onSelectDate }) => {
   useEffect(() => {
     const fetchHolidaysAndEvents = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/holidays-events');
+        const response = await axios.get(`${baseURL}/holidays-events`);
         const data = response.data.holidays;
 
         const holidays = data.filter(item => item.type === 'Holiday').map(item => ({
           title: item.name,
           start: new Date(item.date),
           end: new Date(item.date),
-          
         }));
 
         const events = data.filter(item => item.type === 'Event').map(item => ({
@@ -153,7 +157,7 @@ const FullScreenCalendar = ({ onSelectDate }) => {
           start: new Date(item.date),
           end: new Date(item.date),
         }));
-         
+
         setHolidays(holidays);
         setEvents(events);
       } catch (error) {
@@ -167,6 +171,18 @@ const FullScreenCalendar = ({ onSelectDate }) => {
   const combinedEvents = [...events, ...holidays];
 
   const handleSelectSlot = ({ start, end }) => {
+    // Check if any date in the range is a holiday or weekend
+    let currentDate = new Date(start);
+    const isInvalidSelection = holidays.some(holiday =>
+      currentDate <= end &&
+      holiday.start.getTime() === currentDate.getTime()
+    ) || currentDate.getDay() === 0 || currentDate.getDay() === 6;
+
+    if (isInvalidSelection) {
+      alert('You cannot select holidays or weekends.');
+      return;
+    }
+
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const formattedStart = start.toLocaleDateString('en-CA', options);
 
@@ -174,7 +190,6 @@ const FullScreenCalendar = ({ onSelectDate }) => {
     adjustedEnd.setDate(adjustedEnd.getDate() - 1);
     const formattedEnd = adjustedEnd.toLocaleDateString('en-CA', options);
 
-    const dateRange = formattedStart === formattedEnd ? formattedStart : `${formattedStart} to ${formattedEnd}`;
     onSelectDate(formattedStart, formattedEnd);
   };
 
@@ -188,7 +203,7 @@ const FullScreenCalendar = ({ onSelectDate }) => {
     const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
     return {
-      className: (isHoliday || isWeekend) ? ' pointer-events-none' : '',
+      className: (isHoliday || isWeekend) ? 'pointer-events-none ' : '',
     };
   };
 
@@ -220,7 +235,5 @@ const FullScreenCalendar = ({ onSelectDate }) => {
     </div>
   );
 };
+
 export default FullScreenCalendar;
-
-
-

@@ -11,12 +11,13 @@ import {
 } from "./ui/Table";
 import axios from "axios";
 import { useEffect, useState } from "react";
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 export function HolidayTable() {
   const [holidays, setHolidays] = useState([]);
   const fetchHolidays = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/get-holiday");
+      const response = await axios.get(`${baseURL}/get-holiday`);
       setHolidays(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);

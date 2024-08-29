@@ -2,10 +2,10 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; 
-
 import Header from './Header';
 import Sidebar from './sidebar';
 import Footer from '../user/Footer';
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 function AdminLeaveDetails() {
   const { id } = useParams(); 
@@ -16,7 +16,7 @@ function AdminLeaveDetails() {
   useEffect(() => {
     const fetchLeave = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/leave-details/${id}`);
+        const response = await axios.get(`${baseURL}/leave-details/${id}`);
         setLeave(response.data);
         setLoading(false);
       } catch (error) {

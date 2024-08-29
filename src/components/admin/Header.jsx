@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -18,7 +19,7 @@ const Header = () => {
   
     const fetchUser = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/get-user", {
+        const response = await axios.get(`${baseURL}/get-user`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}` 
           }
