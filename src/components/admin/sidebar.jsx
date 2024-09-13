@@ -5,14 +5,12 @@ import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const [teammateOpen, setTeammateOpen] = useState(false);
-
   const handleTeammateToggle = () => {
     setTeammateOpen(!teammateOpen);
   };
 
   return (
     <div className="bg-[#484C7F] mt-10 ml-5 w-64 flex flex-col rounded-lg h-[580px]">
-
       <div className="text-white p-4 ">
         <div className="px-4 text-lg font-bold">Dashboard</div>
         <nav className="flex-1 mt-4">

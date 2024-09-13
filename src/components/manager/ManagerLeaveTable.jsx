@@ -4,7 +4,6 @@ import axios from "axios";
 import Modal from "../user/Modal";
 import { Button } from "../ui/Button";
 import FullScreenCalendar from "../Calender";
-
 import {
   Table,
   TableBody,
@@ -13,6 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/Table";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export function TableDemo() {
   const [leaves, setLeaves] = useState([]);
@@ -29,9 +30,11 @@ export function TableDemo() {
   });
   const [dateField, setDateField] = useState(null);
 
+  const baseURL = process.env.REACT_APP_API_BASE_URL;
+
   const fetchLeaves = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/get-lea");
+      const response = await axios.get(`${baseURL}/get-managerleaves`);
       setLeaves(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -45,10 +48,22 @@ export function TableDemo() {
     }
 
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/delete-lea/${id}`);
+      await axios.delete(`${baseURL}/delete-managerleave/${id}`);
       setLeaves(leaves.filter((leave) => leave.id !== id));
     } catch (error) {
-      console.error("Error deleting leave:", error);
+      if (error.response && error.response.status === 403) {
+        // alert("You cannot delete this leave as it has been approved by the admin.");
+        Swal.fire({
+          position: "top-center",
+          icon: "warning",
+          title: "You cannot delete this leave as it has been approved by the admin.",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      } else {
+        console.error("Error deleting leave:", error);
+        alert("An error occurred while trying to delete the leave.");
+      }
     }
   };
 
@@ -62,29 +77,6 @@ export function TableDemo() {
     setShowForm(true);
   };
 
-;
-
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevFormData) => {
-  //     const updatedFormData = {
-  //       ...prevFormData,
-  //       [name]: value,
-  //     };
-  //     if ((name === "fromdate" || name === "todate") && updatedFormData.fromdate && updatedFormData.todate) {
-  //       if (new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
-  //         alert("The 'To Date' cannot be earlier than the 'From Date'.");
-  //         updatedFormData.todate = "";
-  //         updatedFormData.noofdays = "";
-  //       } else {
-  //         const noofdays = calculateNoOfDays(updatedFormData.fromdate, updatedFormData.todate);
-  //         updatedFormData.noofdays = noofdays;
-  //       }
-  //     }
-  //     return updatedFormData;
-  //   });
-  // };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => {
@@ -95,14 +87,20 @@ export function TableDemo() {
   
       if ((name === "fromdate" || name === "todate") && updatedFormData.fromdate && updatedFormData.todate) {
         if (new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
-          alert("The 'To Date' cannot be earlier than the 'From Date'.");
+          // alert("The 'To Date' cannot be earlier than the 'From Date'.");
+          Swal.fire({
+            position: "top-center",
+            icon: "warning",
+            title: "The 'To Date' cannot be earlier than the 'From Date'.",
+            showConfirmButton: false,
+            timer: 1500
+          });
           updatedFormData.todate = "";
           updatedFormData.noofdays = "";
         } else {
           const noofdays = calculateNoOfDays(updatedFormData.fromdate, updatedFormData.todate);
           updatedFormData.noofdays = noofdays;
           
-          // Check for weekends
           if (isWeekendPeriod(updatedFormData.fromdate, updatedFormData.todate)) {
             updatedFormData.leavecategory = "Sandwich Leave";
           }
@@ -118,13 +116,11 @@ export function TableDemo() {
     const endDate = new Date(todate);
 
     for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
-      const dayOfWeek = date.getDay();
-     
+      const dayOfWeek = date.getDay(); 
       if (dayOfWeek === 6 || dayOfWeek === 0) {
         return true;
       }
     }
-  
     return false;
   };
   
@@ -143,11 +139,25 @@ export function TableDemo() {
   
       if (updatedFormData.fromdate && updatedFormData.todate) {
         if (dateField === "todate" && new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
-          alert("The 'To Date' cannot be earlier than the 'From Date'.");
+          // alert("The 'To Date' cannot be earlier than the 'From Date'.");
+          Swal.fire({
+            position: "top-center",
+            icon: "warning",
+            title: "The 'To Date' cannot be earlier than the 'From Date'.",
+            showConfirmButton: false,
+            timer: 1500
+          });
           updatedFormData.todate = "";
           updatedFormData.noofdays = "";
         } else if (dateField === "fromdate" && new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
-          alert("The 'To Date' cannot be earlier than the 'From Date'.");
+          // alert("The 'To Date' cannot be earlier than the 'From Date'.");
+          Swal.fire({
+            position: "top-center",
+            icon: "warning",
+            title: "The 'To Date' cannot be earlier than the 'From Date'.",
+            showConfirmButton: false,
+            timer: 1500
+          });
           updatedFormData.todate = "";
           updatedFormData.noofdays = "";
         } else {
@@ -170,7 +180,7 @@ export function TableDemo() {
     e.preventDefault();
     try {
       await axios.post(
-        `http://127.0.0.1:8000/api/update-lea/${currentLeave.id}`,
+        `${baseURL}/update-managerleave/${currentLeave.id}`,
         formData
       );
       setLeaves(
@@ -200,19 +210,28 @@ export function TableDemo() {
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]">Sr no</TableHead>
+            <TableHead className="">Sr no</TableHead>
             <TableHead>Leave type</TableHead>
             <TableHead>Leave category</TableHead>
             <TableHead className="">From date</TableHead>
             <TableHead className="">To date</TableHead>
             <TableHead className="">No of Days</TableHead>
             <TableHead className="">Reason</TableHead>
+            <TableHead className="">Status</TableHead>
+            <TableHead className="">View</TableHead>
             <TableHead className="">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {leaves.map((leave, index) => (
-            <TableRow key={index}>
+            <TableRow key={index}
+            className={`
+              ${leave.status === "Approved" ? "text-green-800" : 
+               leave.status === "Cancelled" ? "text-red-600" : 
+               leave.status === "pending" ? "text-yellow-600" : 
+               "text-gray-500"}
+            `}
+            >
               <TableCell className="font-medium">{leave.id}</TableCell>
               <TableCell>{leave.leavetype}</TableCell>
               <TableCell>{leave.leavecategory}</TableCell>
@@ -220,20 +239,27 @@ export function TableDemo() {
               <TableCell className="">{leave.todate}</TableCell>
               <TableCell className="">{leave.noofdays}</TableCell>
               <TableCell className="">{leave.reason}</TableCell>
+              <TableCell className="">{leave.status}</TableCell>
+              <TableCell>
+                <Link to={`/manager-leavedetails/${leave.id}`}>view</Link>
+              </TableCell>
               <TableCell className="">
                 <div className="flex justify-around">
                   <button
-                    className="rounded text-slate-600 transition"
-                    onClick={() => deleteLeave(leave.id)}
+                     className={`rounded text-red-600 transition ${leave.status === "Approved" ? "opacity-50 cursor-not-allowed" : ""}`}
+                     onClick={() => deleteLeave(leave.id)}
+                     disabled={leave.status === "Approved"}
                   >
                     <CircleX />
                   </button>
+                  <Link to={`/update-managerleave/${leave.id}`}>
                   <button
-                    className="rounded text-black transition"
-                    onClick={() => handleEditClick(leave)}
+                  className={`rounded text-blue-600 transition ${leave.status === "Approved" ? "opacity-50 cursor-not-allowed" : ""}`}
+                  disabled={leave.status === "Approved"}
                   >
                     <FilePenLine />
                   </button>
+                  </Link>
                 </div>
               </TableCell>
             </TableRow>

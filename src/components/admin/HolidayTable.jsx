@@ -10,7 +10,10 @@ import { Trash2, FilePenLine } from "lucide-react";
 import moment from "moment";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
 
+
 export default function HolidayTable() {
+  const ITEMS_PER_PAGE = 4; 
+  const [currentPage, setCurrentPage] = useState(1);
   const [holidays, setHolidays] = useState([]);
   const [currentHoliday, setCurrentHoliday] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -111,6 +114,16 @@ export default function HolidayTable() {
     setShowCalendarModal(true);
   };
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+  const totalPages = Math.ceil(holidays.length / ITEMS_PER_PAGE);
+
+  const currentItems = holidays.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   return (
     <div className="container-fluid">
       <Table className="mt-5">
@@ -125,7 +138,7 @@ export default function HolidayTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {holidays.map((holiday, index) => (
+          {currentItems .map((holiday, index) => (
             <TableRow
               key={holiday.id}
               className={`${holiday.type === "Holiday" ? "text-red-600" : "text-green-800"}`}
@@ -156,6 +169,27 @@ export default function HolidayTable() {
         </TableBody>
       </Table>
 
+          {/* Pagination */}
+          <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+        >
+          Next
+        </button>
+      </div>
+      
       {showForm && (
         <HolidayModal show={showForm} onClose={handleCloseModal}>
         <form className="bg-white p-6 rounded-lg shadow-lg" onSubmit={handleUpdate}>
@@ -234,7 +268,8 @@ export default function HolidayTable() {
             isOpen={showCalendarModal}
             onClose={() => setShowCalendarModal(false)}
             onSelectDate={handleSelectDate}
-          />
+          />    
     </div>
+    
   );
 }

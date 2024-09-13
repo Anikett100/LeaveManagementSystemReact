@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import Header from "./Header";
 import FullScreenCalendar from "../Calender";
-import Footer from "./Footer";
 import { CircleX } from "lucide-react";
-import { MultiSelect } from "react-multi-select-component";
 import axios from "axios";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import Footer from "../user/Footer";
 import Swal from "sweetalert2";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
 
-const ApplyLeave = () => {
+const ApplyManagerLeave = () => {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState("");
   const [selected, setSelected] = useState([]);
@@ -19,12 +18,11 @@ const ApplyLeave = () => {
   const [formData, setFormData] = useState({
     leavetype: "",
     leavecategory: "",
-    cc: [],
     reason: "",
     daterange: "",
-    user_id: "",
     issandwich: "",
     noofdays: "",
+    user_id: "",
   });
 
   const navigate = useNavigate();
@@ -34,15 +32,13 @@ const ApplyLeave = () => {
     setFormData({
       leavetype: "",
       leavecategory: "",
-      cc: [],
       reason: "",
       daterange: "",
       noofdays: "",
       issandwich: "",
-      user_id: "",
+      user_id: "",  
     });
   };
-
   const handleSelectDate = async (start, end) => {
     const today = moment().startOf("day");
     let startDate = moment(start);
@@ -50,7 +46,6 @@ const ApplyLeave = () => {
     let leaveType = "Full Day";
     let containsWeekend = false;
 
-  
     for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
         if (date.day() === 6 || date.day() === 0) { 
             containsWeekend = true;
@@ -64,7 +59,7 @@ const ApplyLeave = () => {
           icon: "warning",
           title: "You cannot select previous dates",
           showConfirmButton: false,
-          timer: 1600
+          timer: 1500
         });
         setError("Cannot select previous dates.");
         return;
@@ -74,7 +69,7 @@ const ApplyLeave = () => {
     let isFridayLeaveApproved = false;
 
     try {
-        const response = await axios.get(`${baseURL}/get-leaves`, {
+        const response = await axios.get(`${baseURL}/get-sandwichleave`, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
             },
@@ -103,14 +98,17 @@ const ApplyLeave = () => {
     }
 
     let numOfDays = endDate.diff(startDate, "days") + 1;
+
     if (containsWeekend) {
         leaveType = "Full Day";
         setDisableOptions(true); 
     }
+
     if (isFridayLeaveApproved) {
         numOfDays += 2; 
     }
- 
+
+    
     setFormData((prevFormData) => ({
         ...prevFormData,
         daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
@@ -126,6 +124,7 @@ const ApplyLeave = () => {
 
     setShowForm(true);
 };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -176,19 +175,18 @@ const ApplyLeave = () => {
         }));
     }
 };
-
+  
   const handleSelectChange = (selectedOptions) => {
     setSelected(selectedOptions);
     setFormData((prevFormData) => ({
       ...prevFormData,
-      cc: selectedOptions.map((option) => option.value),
+    
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userId = localStorage.getItem("user_id");
     const authToken = localStorage.getItem("token");
+    const userId = localStorage.getItem("user_id");
     const leaveData = {
       ...formData,
       user_id: userId,
@@ -201,16 +199,15 @@ const ApplyLeave = () => {
       ...formData,
       leavetype: "",
       leavecategory: "",
-      cc: [],
       reason: "",
       daterange: "",
       noofdays: "",
       issandwich: "",
-      user_id: "",
+      user_id: "",    
     });
 
     try {
-      const response = await axios.post(`${baseURL}/add-leave`, leaveData, {
+      const response = await axios.post(`${baseURL}/add-managerleave`, leaveData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -222,9 +219,9 @@ const ApplyLeave = () => {
           icon: "success",
           title: "Leave request sent successfully",
           showConfirmButton: false,
-          timer: 1600
+          timer: 1500
         });
-        navigate("/user");
+          navigate("/manager");
       } else {
         setError("Error submitting leave request");
         setFormData(previousFormData);
@@ -235,18 +232,15 @@ const ApplyLeave = () => {
       setFormData(previousFormData);
     }
   };
-
   const options = [
-    { label: "sankalp@ycstech.in", value: "sankalp@ycstech.in" },
-    { label: "kartik@ycstech.in", value: "kartik@ycstech.in" },
-    { label: "design@ycstech.in", value: "design@ycstech.in" },
+    { label: "sankalp@ycstech.in", value: "sankalp@ycstech.in" },   
   ];
 
   return (
     <>
       <Header />
       <FullScreenCalendar onSelectDate={handleSelectDate} />
-      <Footer />
+      <Footer/>
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-75">
@@ -308,15 +302,6 @@ const ApplyLeave = () => {
                   </option>
                 </select>
               </div>
-
-              <div className="mb-4">
-                <MultiSelect
-                  options={options}
-                  value={selected}
-                  onChange={handleSelectChange}
-                  labelledBy="Select"
-                />
-              </div>
               <div className="mb-4">
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -371,7 +356,7 @@ const ApplyLeave = () => {
   );
 };
 
-export default ApplyLeave;
+export default ApplyManagerLeave;
 
 
 

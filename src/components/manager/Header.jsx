@@ -1,8 +1,11 @@
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [user, setUser] = useState(null);
   
     const handleDropdownToggle = () => {
       setDropdownOpen(!dropdownOpen);
@@ -13,6 +16,25 @@ const Header = () => {
         setDropdownOpen(false);
       }
     };
+
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/get-user`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}` 
+          }
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    useEffect(() => {
+      fetchUser(); 
+    }, [])
+  
+
   
     useEffect(() => {
       if (dropdownOpen) {
@@ -39,7 +61,7 @@ const Header = () => {
                 onClick={handleDropdownToggle}
                 className="text-black cursor-pointer"
               >
-                Aniket Navale
+                {user ? user.name : "Loading..."}
               </h2>
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">

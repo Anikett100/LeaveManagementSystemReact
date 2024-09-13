@@ -2,16 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import FullScreenCalendar from '../Calender';
-import Footer from './Footer';
+
 import { CircleX } from 'lucide-react';
 import { MultiSelect } from 'react-multi-select-component';
 import axios from 'axios';
 import moment from 'moment';
 import { useParams, useNavigate } from 'react-router-dom';
+import Footer from '../user/Footer';
 import Swal from 'sweetalert2';
  const baseURL = process.env.REACT_APP_API_BASE_URL;
 
-function UpdateLeave() {
+function UpdataeManagerLeave() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [disableOptions, setDisableOptions] = useState(false);
@@ -21,27 +22,18 @@ function UpdateLeave() {
   const [formData, setFormData] = useState({
     leavetype: '',
     leavecategory: '',
-    cc: [],
     reason: '',
-    //  daterange: '',
-    user_id: '',
     issandwich: '',
     noofdays: '',
     fromdate: '',
-    todate: '',  
+    todate: '', 
+    user_id: '', 
   });
   
-
-  const options = [
-    { label: 'sankalp@ycstech.in', value: 'sankalp@ycstech.in' },
-    { label: 'kartik@ycstech.in', value: 'kartik@ycstech.in' },
-    { label: 'design@ycstech.in', value: 'design@ycstech.in' },
-  ];
-
   useEffect(() => {
     const fetchLeaveData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/get-userleave/${id}`);
+        const response = await axios.get(`${baseURL}/get-updateleave/${id}`);
         const leaveData = response.data;
   
         const daterange = moment(leaveData.fromdate).format('MMMM D, YYYY') + 
@@ -53,13 +45,12 @@ function UpdateLeave() {
         setFormData({
           leavetype: leaveData.leavetype,
           leavecategory: leaveData.leavecategory,
-          cc: leaveData.cc,
           reason: leaveData.reason,
            daterange: daterange,
           fromdate: moment(leaveData.fromdate).format('MMMM D, YYYY'),
           todate: moment(leaveData.todate).format('MMMM D, YYYY'),
-          user_id: leaveData.user_id,
           issandwich: leaveData.issandwich,
+          user_id: leaveData.user_id,
           noofdays: leaveData.noofdays,
         });
   
@@ -89,15 +80,16 @@ function UpdateLeave() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const userId = localStorage.getItem('user_id');
     const authToken = localStorage.getItem('token');
+    const userId = localStorage.getItem('user_id');
     const leaveData = {
       ...formData,
       user_id: userId,
+
     };
 
     try {
-      await axios.post(`${baseURL}/update-leave/${id}`, leaveData, {
+      await axios.post(`${baseURL}/update-managerleave/${id}`, leaveData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -106,12 +98,12 @@ function UpdateLeave() {
       Swal.fire({
         position: "top-center",
         icon: "success",
-        title: 'Leave request updated successfully',
+        title: "Leave request updated successfully",
         showConfirmButton: false,
         timer: 1500
       });
       handleCloseModal();
-      navigate('/user'); 
+      navigate('/manager'); 
     } catch (error) {
       setError('Error updating leave request');
       console.error('Error:', error);
@@ -139,7 +131,7 @@ const handleSelectDate = async (start, end) => {
       Swal.fire({
         position: "top-center",
         icon: "warning",
-        title:"You cannot select previous dates",
+        title: "You cannot select previous dates",
         showConfirmButton: false,
         timer: 1500
       });
@@ -151,7 +143,7 @@ const handleSelectDate = async (start, end) => {
   let isFridayLeaveApproved = false;
 
   try {
-      const response = await axios.get(`${baseURL}/get-leaves`, {
+      const response = await axios.get(`${baseURL}/get-sandwichleave`, {
           headers: {
               Authorization: `Bearer ${authToken}`,
           },
@@ -187,10 +179,12 @@ const handleSelectDate = async (start, end) => {
       setDisableOptions(true); 
   }
 
+
   if (isFridayLeaveApproved) {
       numOfDays += 2; 
   }
- 
+
+  
   setFormData((prevFormData) => ({
       ...prevFormData,
       daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
@@ -324,15 +318,7 @@ const handleChange = (e) => {
                   </option>
                 </select>
               </div>
-              <div className="mb-4">
-                <MultiSelect
-                  options={options}
-                  value={selected}
-                  onChange={handleSelectChange}
-                  labelledBy="Select"
-                />
-              </div>
-
+        
               <div className="mb-4">
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -388,7 +374,7 @@ const handleChange = (e) => {
   );
 }
 
-export default UpdateLeave;
+export default UpdataeManagerLeave;
 
 
 

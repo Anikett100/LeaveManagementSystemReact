@@ -1,11 +1,11 @@
 
 import React from "react";
-import Sidebar from "./sidebar";
 import Header from "./Header";
 import Footer from "../user/Footer";
 import AttendanceTable from "./AttendanceTable"; 
+import Sidebar from "./Sidebar";
 
-function Attendance() {
+function ManagerAttendance() {
   return (
     <>
       <div className="flex">
@@ -14,8 +14,7 @@ function Attendance() {
           <Header/>
           <div className="">
           <AttendanceTable /> 
-          </div>
-         
+          </div>        
         </div>
       </div>
       <Footer/>
@@ -23,4 +22,4 @@ function Attendance() {
   );
 }
 
-export default Attendance;
+export default ManagerAttendance;

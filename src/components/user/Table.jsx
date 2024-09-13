@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/Table";
+import Swal from "sweetalert2";
 
 const ITEMS_PER_PAGE = 4; 
 const baseURL = process.env.REACT_APP_API_BASE_URL;
@@ -42,7 +43,14 @@ export function TableDemo() {
       setLeaves(leaves.filter((leave) => leave.id !== id));
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        alert("You cannot delete this leave as it has been approved by the admin.");
+        // alert("You cannot delete this leave as it has been approved by the admin.");
+        Swal.fire({
+          position: "top-center",
+          icon: "warning",
+          title: "You cannot delete this leave as it has been approved by the admin.",
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
         console.error("Error deleting leave:", error);
         alert("An error occurred while trying to delete the leave.");
