@@ -5,6 +5,7 @@ import axios from "axios";
 import ManagerModal from "./ReasonModal";
 import { Link } from "react-router-dom";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
+const ITEMS_PER_PAGE = 4; 
 
 export function LeaveRequestTable() {
   const [leaves, setLeaves] = useState([]);
@@ -12,7 +13,7 @@ export function LeaveRequestTable() {
   const [currentAction, setCurrentAction] = useState({ status: "", id: null });
   const [actionReason, setActionReason] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 4; 
+
 
   const fetchLeaves = async () => {
     try {
@@ -87,7 +88,7 @@ export function LeaveRequestTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {leaves.map((leave, index) => (
+          {currentItems.map((leave, index) => (
             <TableRow key={leave.id}
             className={`
               ${leave.status === "Approved" ? "text-green-800" : 

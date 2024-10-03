@@ -14,12 +14,14 @@ import {
 } from "../ui/Table";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+const ITEMS_PER_PAGE = 4; 
 
 export function TableDemo() {
   const [leaves, setLeaves] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [currentLeave, setCurrentLeave] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({
     leavecategory: "",
     leavetype: "",
@@ -205,6 +207,16 @@ export function TableDemo() {
     return diffDays;
   };
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+  const totalPages = Math.ceil(leaves.length / ITEMS_PER_PAGE);
+
+  const currentItems = leaves.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   return (
     <div className="container-fluid">
       <Table className="mt-5">
@@ -266,6 +278,26 @@ export function TableDemo() {
           ))}
         </TableBody>
       </Table>
+        {/* Pagination  */}
+        <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+        >
+          Next
+        </button>
+      </div>
 
       {showForm && (
         <Modal show={showForm} onClose={() => setShowForm(false)}>

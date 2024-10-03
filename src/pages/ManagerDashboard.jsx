@@ -133,7 +133,9 @@ function ManagerDashboard() {
       <Header />
       <div className="p-4">
       <div className="container">
-        <div className="flex justify-end mt-4 space-x-2"> 
+      
+        <div className="flex justify-between mt-4 space-x-2"> 
+        <h1 className='text-3xl text-[#484C7F] font-bold ml-3 mt-2 mb-1'>Leave Requests</h1>
           <Link to='/manager-leave'>
           <Button className="bg-[#484C7F] flex items-center">
             <CirclePlus className="w-5 h-5 mr-2" />
@@ -141,6 +143,7 @@ function ManagerDashboard() {
           </Button>
           </Link>
         </div>
+        <hr/>
       </div>
     <div className="container">
         <TableDemo/>
