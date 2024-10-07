@@ -43,227 +43,139 @@ const ApplyLeave = () => {
     });
   };
 
-//   const handleSelectDate = async (start, end) => {
-//     const today = moment().startOf("day");
-//     let startDate = moment(start);
-//     const endDate = moment(end);
-//     let leaveType = "Full Day";
-//     let containsWeekend = false;
+  const handleSelectDate = async (start, end) => {
+    const today = moment().startOf("day");
+    let startDate = moment(start);
+    const endDate = moment(end);
+    let leaveType = "Full Day";
+    let containsWeekend = false;
 
   
-//     for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
-//         if (date.day() === 6 || date.day() === 0) { 
-//             containsWeekend = true;
-//             break;
-//         }
-//     }  
-//     if (startDate.isBefore(today) || endDate.isBefore(today)) {
-//         // alert("You cannot select previous dates");
-//         Swal.fire({
-//           position: "top-center",
-//           icon: "warning",
-//           title: "You cannot select previous dates",
-//           showConfirmButton: false,
-//           timer: 1600
-//         });
-//         setError("Cannot select previous dates.");
-//         return;
-//     }
+    for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
+        if (date.day() === 6 || date.day() === 0) { 
+            containsWeekend = true;
+            break;
+        }
+    }  
+    if (startDate.isBefore(today) || endDate.isBefore(today)) {
+       
+        Swal.fire({
+          position: "top-center",
+          icon: "warning",
+          title: "You cannot select previous dates",
+          showConfirmButton: false,
+          timer: 1600
+        });
+        setError("Cannot select previous dates.");
+        return;
+    }
 
-//     const authToken = localStorage.getItem("token");
-//     let isFridayLeaveApproved = false;
+    const authToken = localStorage.getItem("token");
+    let isFridayLeaveApproved = false;
 
-//     try {
-//         const response = await axios.get(`${baseURL}/get-leaves`, {
-//             headers: {
-//                 Authorization: `Bearer ${authToken}`,
-//             },
-//         });
+    try {
+        const response = await axios.get(`${baseURL}/get-leaves`, {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+        });
 
-//         const existingLeaves = response.data.leaves;
-//         console.log("Existing Leaves:", existingLeaves);
+        const existingLeaves = response.data.leaves;
+        console.log("Existing Leaves:", existingLeaves);
 
-//         if (startDate.day() === 1) { 
-//             const prevFriday = startDate.clone().subtract(3, "days");
-//             console.log("Previous Friday:", prevFriday.format("MMMM D, YYYY"));
+        if (startDate.day() === 1) { 
+            const prevFriday = startDate.clone().subtract(3, "days");
+            console.log("Previous Friday:", prevFriday.format("MMMM D, YYYY"));
 
-//             const fridayLeave = existingLeaves.find(
-//                 (leave) =>
-//                     moment(leave.todate).isSame(prevFriday, "day") &&
-//                     leave.status === "Approved" &&
-//                     leave.leavetype === "Full Day"
-//             );
+            const fridayLeave = existingLeaves.find(
+                (leave) =>
+                    moment(leave.todate).isSame(prevFriday, "day") &&
+                    leave.status === "Approved" &&
+                    leave.leavetype === "Full Day"
+            );
 
-//             if (fridayLeave) {
-//                 isFridayLeaveApproved = true;
-//             }
-//         }
-//     } catch (error) {
-//         console.error("Error fetching user leaves:", error);
-//     }
+            if (fridayLeave) {
+                isFridayLeaveApproved = true;
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching user leaves:", error);
+    }
 
-//     let numOfDays = endDate.diff(startDate, "days") + 1;
-//     if (containsWeekend) {
-//         leaveType = "Full Day";
-//         setDisableOptions(true); 
-//     }
-//     if (isFridayLeaveApproved) {
-//         numOfDays += 2; 
-//     }
+    let numOfDays = endDate.diff(startDate, "days") + 1;
+    if (containsWeekend) {
+        leaveType = "Full Day";
+        setDisableOptions(true); 
+    }
+    if (isFridayLeaveApproved) {
+        numOfDays += 2; 
+    }
  
-//     setFormData((prevFormData) => ({
-//         ...prevFormData,
-//         daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
-//             "MMMM D, YYYY"
-//         )}`,
-//         fromdate: startDate.format("MMMM D, YYYY"),
-//         todate: endDate.format("MMMM D, YYYY"),
-//         noofdays: numOfDays,
-//         leavetype: leaveType,
-//         issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
-//         isFridayLeaveApproved,
-//     }));
+    setFormData((prevFormData) => ({
+        ...prevFormData,
+        daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
+            "MMMM D, YYYY"
+        )}`,
+        fromdate: startDate.format("MMMM D, YYYY"),
+        todate: endDate.format("MMMM D, YYYY"),
+        noofdays: numOfDays,
+        leavetype: leaveType,
+        issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
+        isFridayLeaveApproved,
+    }));
 
-//     setShowForm(true);
-// };
-
-
-
-
-
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-    
-//     if (name === "leavetype" || name === "fromdate" || name === "todate") {
-//         const startDate = moment(formData.fromdate, "MMMM D, YYYY");
-//         const endDate = moment(formData.todate, "MMMM D, YYYY");
-    
-//         let isSandwich = false;
-//         let numOfDays = endDate.diff(startDate, "days") + 1;
-//         let leaveType = value;
-
-//         if (name === "fromdate" || name === "todate") {
-//             for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
-//                 if (date.day() === 6 || date.day() === 0) { 
-//                     isSandwich = true;
-//                     leaveType = "Full Day"; 
-//                     setDisableOptions(true); 
-//                     break;
-//                 }
-//             }
-//         }
-//         if (name === "leavetype" && leaveType === "Full Day") {
-//             for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
-//                 if (date.day() === 6 || date.day() === 0) {
-//                     isSandwich = true;
-//                     setDisableOptions(true);
-//                     break;
-//                 }
-//             }
-
-//             if (startDate.day() === 1 && formData.isFridayLeaveApproved) {
-//                 isSandwich = true;
-//                 numOfDays += 2; 
-//             }
-//         }
-
-//         setFormData((prevFormData) => ({
-//             ...prevFormData,
-//             leavetype: leaveType,
-//             issandwich: isSandwich ? "Yes" : "No",
-//             noofdays: numOfDays,
-//         }));
-//     } else {
-//         setFormData((prevFormData) => ({
-//             ...prevFormData,
-//             [name]: value,
-//         }));
-//     }
-// };
-
-
-
-
-const handleSelectDate = async (start, end) => {
-  const today = moment().startOf("day");
-  let startDate = moment(start);
-  const endDate = moment(end);
-  let leaveType = "";  // Default to "Full Day"
-  let containsWeekend = false;
-
-  for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
-      if (date.day() === 6 || date.day() === 0) { 
-          containsWeekend = true;
-          break;
-      }
-  }
-
-  if (startDate.isBefore(today) || endDate.isBefore(today)) {
-      Swal.fire({
-        position: "top-center",
-        icon: "warning",
-        title: "You cannot select previous dates",
-        showConfirmButton: false,
-        timer: 1600
-      });
-      setError("Cannot select previous dates.");
-      return;
-  }
-
-  let numOfDays = endDate.diff(startDate, "days") + 1;
-
-  // Automatically set "Full Day" if more than 1 day is selected
-  if (numOfDays > 1) {
-      leaveType = "Full Day";
-      setDisableOptions(true);  // Disable other options for more than 1 day
-  }
-
-  setFormData((prevFormData) => ({
-      ...prevFormData,
-      daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
-          "MMMM D, YYYY"
-      )}`,
-      fromdate: startDate.format("MMMM D, YYYY"),
-      todate: endDate.format("MMMM D, YYYY"),
-      noofdays: numOfDays,
-      leavetype: leaveType, // Automatically set "Full Day"
-      issandwich: containsWeekend ? "Yes" : "No",
-  }));
-
-  setShowForm(true);
+    setShowForm(true);
 };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    if (name === "leavetype" || name === "fromdate" || name === "todate") {
+        const startDate = moment(formData.fromdate, "MMMM D, YYYY");
+        const endDate = moment(formData.todate, "MMMM D, YYYY");
+    
+        let isSandwich = false;
+        let numOfDays = endDate.diff(startDate, "days") + 1;
+        let leaveType = value;
 
+        if (name === "fromdate" || name === "todate") {
+            for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
+                if (date.day() === 6 || date.day() === 0) { 
+                    isSandwich = true;
+                    leaveType = "Full Day"; 
+                    setDisableOptions(true); 
+                    break;
+                }
+            }
+        }
+        if (name === "leavetype" && leaveType === "Full Day") {
+            for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
+                if (date.day() === 6 || date.day() === 0) {
+                    isSandwich = true;
+                    setDisableOptions(true);
+                    break;
+                }
+            }
 
+            if (startDate.day() === 1 && formData.isFridayLeaveApproved) {
+                isSandwich = true;
+                numOfDays += 2; 
+            }
+        }
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
-
-  if (name === "leavetype") {
-      // Only allow selecting leave type if number of days is 1
-      if (formData.noofdays > 1) {
-          setFormData((prevFormData) => ({
-              ...prevFormData,
-              leavetype: "Full Day",  // Keep "Full Day" selected
-          }));
-      } else {
-          setFormData((prevFormData) => ({
-              ...prevFormData,
-              leavetype: value,
-          }));
-      }
-  } else {
-      setFormData((prevFormData) => ({
-          ...prevFormData,
-          [name]: value,
-      }));
-  }
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            leavetype: leaveType,
+            issandwich: isSandwich ? "Yes" : "No",
+            noofdays: numOfDays,
+        }));
+    } else {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
+    }
 };
-
-
-
-
 
   const handleSelectChange = (selectedOptions) => {
     setSelected(selectedOptions);

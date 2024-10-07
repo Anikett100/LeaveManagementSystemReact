@@ -49,9 +49,11 @@ export default function Header() {
   return (
     <nav className="bg-gray-200 p-4 h-24">
       <div className="md:container md:mx-auto flex justify-between items-center">
+        <Link  to='/user'>
         <div className="w-40">
           <img className="h-14" src="/companyLogo.svg" alt="Company Logo" />
         </div>
+        </Link>
         <div className="flex items-center space-x-4">
           <div className="relative">
             <h2

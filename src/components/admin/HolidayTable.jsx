@@ -91,7 +91,9 @@ export default function HolidayTable() {
 
   const handleSelectDate = (date) => {
     const selectedDate = new Date(date);
-    const formattedDate = moment(selectedDate).format("MMMM D, YYYY");
+     const formattedDate = moment(selectedDate).format("MMMM D, YYYY");
+
+ 
     const selectedDay = moment(selectedDate).format("dddd"); 
   
     setFormData((prevFormData) => ({

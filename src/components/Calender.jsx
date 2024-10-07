@@ -55,35 +55,34 @@ const FullScreenCalendar = ({ onSelectDate }) => {
 
   const combinedEvents = [...events, ...holidays];
 
-  const handleSelectSlot = ({ start, end }) => {
-    // Check if any date in the range is a holiday or weekend
-    let currentDate = new Date(start);
-    const isInvalidSelection = holidays.some(holiday =>
-      currentDate <= end &&
-      holiday.start.getTime() === currentDate.getTime()
-    ) || currentDate.getDay() === 0 || currentDate.getDay() === 6;
 
-    if (isInvalidSelection) {
-      // alert('You cannot select holidays or weekends.');
+  
+  const handleSelectSlot = ({ start, end }) => {
+  
+    const adjustedEnd = new Date(end);
+    adjustedEnd.setDate(adjustedEnd.getDate() - 1);
+
+    const isWeekend = (date) => date.getDay() === 0 || date.getDay() === 6;
+  
+    if (isWeekend(start) || isWeekend(adjustedEnd)) {
       Swal.fire({
         position: "top-center",
         icon: "warning",
-        title:'You cannot select holidays or weekends.',
+        title: 'You cannot select a date range that starts or ends on a weekend.',
         showConfirmButton: false,
         timer: 1500
       });
       return;
     }
-
+  
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const formattedStart = start.toLocaleDateString('en-CA', options);
-
-    const adjustedEnd = new Date(end);
-    adjustedEnd.setDate(adjustedEnd.getDate() - 1);
     const formattedEnd = adjustedEnd.toLocaleDateString('en-CA', options);
-
+  
     onSelectDate(formattedStart, formattedEnd);
   };
+  
+
 
   const dayPropGetter = (date) => {
     const isHoliday = holidays.some(event =>

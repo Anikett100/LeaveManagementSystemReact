@@ -48,7 +48,6 @@ export default function Index() {
         <div className="mt-4">
           {user && (
             <div className="text-black text-xl">
-             {/* Carry Forward Leaves: {user.paidleaves} */}
              <h1 className='text-2xl text-[#484C7F] font-bold ml-3 mt-2'>  Carry Forward Leaves: {user.paidleaves}</h1>
             </div>
           )}
