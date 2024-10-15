@@ -309,14 +309,33 @@ const ApplyLeave = () => {
                 </select>
               </div>
 
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <MultiSelect
                   options={options}
                   value={selected}
                   onChange={handleSelectChange}
-                  labelledBy="Select"
+                  labelledBy="Select cc field"
                 />
-              </div>
+              </div> */}
+              
+              <div className="mb-4">
+  <MultiSelect
+    options={options}
+    value={selected}
+    onChange={handleSelectChange}
+    labelledBy="Select CC"
+    hasSelectAll={false} 
+    overrideStrings={{
+      selectSomeItems: "Select recipients (CC)", 
+      allItemsAreSelected: "All recipients selected",
+      selectAll: "Select all recipients",
+      search: "Search recipients...",
+      clearSearch: "Clear search",
+    }}
+  />
+</div>
+
+
               <div className="mb-4">
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

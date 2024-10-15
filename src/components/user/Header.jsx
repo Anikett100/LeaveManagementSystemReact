@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -21,7 +22,7 @@ export default function Header() {
     try {
       const response = await axios.get(`${baseURL}/get-user`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}` 
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       });
       setUser(response.data);
