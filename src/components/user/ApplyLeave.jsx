@@ -138,12 +138,12 @@ const ApplyLeave = () => {
   
           setShowForm(true);
         } else {
-          // Reset or handle the case where user cancels the action
+          
           setError("Leave request cancelled due to sandwich leave.");
         }
       });
     } else {
-      // Normal leave submission without sandwich condition
+     
       setFormData((prevFormData) => ({
         ...prevFormData,
         daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(

@@ -187,6 +187,97 @@ function UpdataeManagerLeave() {
   
 
 
+// const handleSelectDate = async (start, end) => {
+//   const today = moment().startOf("day");
+//   let startDate = moment(start);
+//   const endDate = moment(end);
+//   let leaveType = "Full Day";
+//   let containsWeekend = false;
+
+
+//   for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
+//       if (date.day() === 6 || date.day() === 0) { 
+//           containsWeekend = true;
+//           break;
+//       }
+//   }
+
+ 
+//   if (startDate.isBefore(today) || endDate.isBefore(today)) {
+//       // alert("You cannot select previous dates");
+//       Swal.fire({
+//         position: "top-center",
+//         icon: "warning",
+//         title: "You cannot select previous dates",
+//         showConfirmButton: false,
+//         timer: 1500
+//       });
+//       setError("Cannot select previous dates.");
+//       return;
+//   }
+
+//   const authToken = localStorage.getItem("token");
+//   let isFridayLeaveApproved = false;
+
+//   try {
+//       const response = await axios.get(`${baseURL}/get-sandwichleave`, {
+//           headers: {
+//               Authorization: `Bearer ${authToken}`,
+//           },
+//       });
+
+//       const existingLeaves = response.data.leaves;
+//       console.log("Existing Leaves:", existingLeaves);
+
+//       if (startDate.day() === 1) { 
+//           const prevFriday = startDate.clone().subtract(3, "days");
+//           console.log("Previous Friday:", prevFriday.format("MMMM D, YYYY"));
+
+//           const fridayLeave = existingLeaves.find(
+//               (leave) =>
+//                   moment(leave.todate).isSame(prevFriday, "day") &&
+//                   leave.status === "Approved" &&
+//                   leave.leavetype === "Full Day"
+//           );
+
+//           if (fridayLeave) {
+//               isFridayLeaveApproved = true;
+//           }
+//       }
+//   } catch (error) {
+//       console.error("Error fetching user leaves:", error);
+//   }
+
+//   let numOfDays = endDate.diff(startDate, "days") + 1;
+
+
+//   if (containsWeekend) {
+//       leaveType = "Full Day";
+//       setDisableOptions(true); 
+//   }
+
+
+//   if (isFridayLeaveApproved) {
+//       numOfDays += 2; 
+//   }
+
+  
+//   setFormData((prevFormData) => ({
+//       ...prevFormData,
+//       daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
+//           "MMMM D, YYYY"
+//       )}`,
+//       fromdate: startDate.format("MMMM D, YYYY"),
+//       todate: endDate.format("MMMM D, YYYY"),
+//       noofdays: numOfDays,
+//       leavetype: leaveType,
+//       issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
+//       isFridayLeaveApproved,
+//   }));
+
+//   setShowForm(true);
+// };
+
 const handleSelectDate = async (start, end) => {
   const today = moment().startOf("day");
   let startDate = moment(start);
@@ -194,88 +285,112 @@ const handleSelectDate = async (start, end) => {
   let leaveType = "Full Day";
   let containsWeekend = false;
 
-
-  for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
-      if (date.day() === 6 || date.day() === 0) { 
-          containsWeekend = true;
-          break;
-      }
+  for (
+    let date = startDate.clone();
+    date.isSameOrBefore(endDate);
+    date.add(1, "days")
+  ) {
+    if (date.day() === 6 || date.day() === 0) {
+      containsWeekend = true;
+      break;
+    }
   }
 
- 
   if (startDate.isBefore(today) || endDate.isBefore(today)) {
-      // alert("You cannot select previous dates");
-      Swal.fire({
-        position: "top-center",
-        icon: "warning",
-        title: "You cannot select previous dates",
-        showConfirmButton: false,
-        timer: 1500
-      });
-      setError("Cannot select previous dates.");
-      return;
+    Swal.fire({
+      position: "top-center",
+      icon: "warning",
+      title: "You cannot select previous dates",
+      showConfirmButton: false,
+      timer: 1600,
+    });
+    setError("Cannot select previous dates.");
+    return;
   }
 
   const authToken = localStorage.getItem("token");
   let isFridayLeaveApproved = false;
 
   try {
-      const response = await axios.get(`${baseURL}/get-sandwichleave`, {
-          headers: {
-              Authorization: `Bearer ${authToken}`,
-          },
-      });
+    const response = await axios.get(`${baseURL}/get-sandwichleave`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
 
-      const existingLeaves = response.data.leaves;
-      console.log("Existing Leaves:", existingLeaves);
+    const existingLeaves = response.data.leaves;
 
-      if (startDate.day() === 1) { 
-          const prevFriday = startDate.clone().subtract(3, "days");
-          console.log("Previous Friday:", prevFriday.format("MMMM D, YYYY"));
+    if (startDate.day() === 1) {
+      const prevFriday = startDate.clone().subtract(3, "days");
 
-          const fridayLeave = existingLeaves.find(
-              (leave) =>
-                  moment(leave.todate).isSame(prevFriday, "day") &&
-                  leave.status === "Approved" &&
-                  leave.leavetype === "Full Day"
-          );
+      const fridayLeave = existingLeaves.find(
+        (leave) =>
+          moment(leave.todate).isSame(prevFriday, "day") &&
+          leave.status === "Approved" &&
+          leave.leavetype === "Full Day"
+      );
 
-          if (fridayLeave) {
-              isFridayLeaveApproved = true;
-          }
+      if (fridayLeave) {
+        isFridayLeaveApproved = true;
       }
+    }
   } catch (error) {
-      console.error("Error fetching user leaves:", error);
+    console.error("Error fetching user leaves:", error);
   }
 
   let numOfDays = endDate.diff(startDate, "days") + 1;
+  if (containsWeekend || isFridayLeaveApproved) {
+    Swal.fire({
+      title: "Sandwich Leave Detected",
+      text: "The leave period contains a weekend or an approved Friday leave. Do you want to continue?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, continue",
+      cancelButtonText: "No, cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        leaveType = "Full Day";
+        setDisableOptions(true);
 
+        if (isFridayLeaveApproved) {
+          numOfDays += 2;
+        }
 
-  if (containsWeekend) {
-      leaveType = "Full Day";
-      setDisableOptions(true); 
-  }
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
+            "MMMM D, YYYY"
+          )}`,
+          fromdate: startDate.format("MMMM D, YYYY"),
+          todate: endDate.format("MMMM D, YYYY"),
+          noofdays: numOfDays,
+          leavetype: leaveType,
+          issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
+          isFridayLeaveApproved,
+        }));
 
-
-  if (isFridayLeaveApproved) {
-      numOfDays += 2; 
-  }
-
-  
-  setFormData((prevFormData) => ({
+        setShowForm(true);
+      } else {
+        
+        setError("Leave request cancelled due to sandwich leave.");
+      }
+    });
+  } else {
+   
+    setFormData((prevFormData) => ({
       ...prevFormData,
       daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
-          "MMMM D, YYYY"
+        "MMMM D, YYYY"
       )}`,
       fromdate: startDate.format("MMMM D, YYYY"),
       todate: endDate.format("MMMM D, YYYY"),
       noofdays: numOfDays,
       leavetype: leaveType,
-      issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
-      isFridayLeaveApproved,
-  }));
+      issandwich: "No",
+    }));
 
-  setShowForm(true);
+    setShowForm(true);
+  }
 };
 
 
