@@ -28,6 +28,7 @@ const ApplyLeave = () => {
   });
 
   const navigate = useNavigate();
+  
 
   const handleCloseModal = () => {
     setShowForm(false);
@@ -43,139 +44,180 @@ const ApplyLeave = () => {
     });
   };
 
+ 
   const handleSelectDate = async (start, end) => {
     const today = moment().startOf("day");
     let startDate = moment(start);
     const endDate = moment(end);
     let leaveType = "Full Day";
     let containsWeekend = false;
-
   
-    for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
-        if (date.day() === 6 || date.day() === 0) { 
-            containsWeekend = true;
-            break;
-        }
-    }  
-    if (startDate.isBefore(today) || endDate.isBefore(today)) {
-       
-        Swal.fire({
-          position: "top-center",
-          icon: "warning",
-          title: "You cannot select previous dates",
-          showConfirmButton: false,
-          timer: 1600
-        });
-        setError("Cannot select previous dates.");
-        return;
+    for (
+      let date = startDate.clone();
+      date.isSameOrBefore(endDate);
+      date.add(1, "days")
+    ) {
+      if (date.day() === 6 || date.day() === 0) {
+        containsWeekend = true;
+        break;
+      }
     }
-
+  
+    if (startDate.isBefore(today) || endDate.isBefore(today)) {
+      Swal.fire({
+        position: "top-center",
+        icon: "warning",
+        title: "You cannot select previous dates",
+        showConfirmButton: false,
+        timer: 1600,
+      });
+      setError("Cannot select previous dates.");
+      return;
+    }
+  
     const authToken = localStorage.getItem("token");
     let isFridayLeaveApproved = false;
-
+  
     try {
-        const response = await axios.get(`${baseURL}/get-leaves`, {
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-            },
-        });
-
-        const existingLeaves = response.data.leaves;
-        console.log("Existing Leaves:", existingLeaves);
-
-        if (startDate.day() === 1) { 
-            const prevFriday = startDate.clone().subtract(3, "days");
-            console.log("Previous Friday:", prevFriday.format("MMMM D, YYYY"));
-
-            const fridayLeave = existingLeaves.find(
-                (leave) =>
-                    moment(leave.todate).isSame(prevFriday, "day") &&
-                    leave.status === "Approved" &&
-                    leave.leavetype === "Full Day"
-            );
-
-            if (fridayLeave) {
-                isFridayLeaveApproved = true;
-            }
+      const response = await axios.get(`${baseURL}/get-leaves`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+  
+      const existingLeaves = response.data.leaves;
+  
+      if (startDate.day() === 1) {
+        const prevFriday = startDate.clone().subtract(3, "days");
+  
+        const fridayLeave = existingLeaves.find(
+          (leave) =>
+            moment(leave.todate).isSame(prevFriday, "day") &&
+            leave.status === "Approved" &&
+            leave.leavetype === "Full Day"
+        );
+  
+        if (fridayLeave) {
+          isFridayLeaveApproved = true;
         }
+      }
     } catch (error) {
-        console.error("Error fetching user leaves:", error);
+      console.error("Error fetching user leaves:", error);
     }
-
+  
     let numOfDays = endDate.diff(startDate, "days") + 1;
-    if (containsWeekend) {
-        leaveType = "Full Day";
-        setDisableOptions(true); 
-    }
-    if (isFridayLeaveApproved) {
-        numOfDays += 2; 
-    }
- 
-    setFormData((prevFormData) => ({
+    if (containsWeekend || isFridayLeaveApproved) {
+      Swal.fire({
+        title: "Sandwich Leave Detected",
+        text: "The leave period contains a weekend or an approved Friday leave. Do you want to continue?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, continue",
+        cancelButtonText: "No, cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          leaveType = "Full Day";
+          setDisableOptions(true);
+  
+          if (isFridayLeaveApproved) {
+            numOfDays += 2;
+          }
+  
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
+              "MMMM D, YYYY"
+            )}`,
+            fromdate: startDate.format("MMMM D, YYYY"),
+            todate: endDate.format("MMMM D, YYYY"),
+            noofdays: numOfDays,
+            leavetype: leaveType,
+            issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
+            isFridayLeaveApproved,
+          }));
+  
+          setShowForm(true);
+        } else {
+          // Reset or handle the case where user cancels the action
+          setError("Leave request cancelled due to sandwich leave.");
+        }
+      });
+    } else {
+      // Normal leave submission without sandwich condition
+      setFormData((prevFormData) => ({
         ...prevFormData,
         daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
-            "MMMM D, YYYY"
+          "MMMM D, YYYY"
         )}`,
         fromdate: startDate.format("MMMM D, YYYY"),
         todate: endDate.format("MMMM D, YYYY"),
         noofdays: numOfDays,
         leavetype: leaveType,
-        issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
-        isFridayLeaveApproved,
-    }));
-
-    setShowForm(true);
-};
+        issandwich: "No",
+      }));
+  
+      setShowForm(true);
+    }
+  };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name === "leavetype" || name === "fromdate" || name === "todate") {
-        const startDate = moment(formData.fromdate, "MMMM D, YYYY");
-        const endDate = moment(formData.todate, "MMMM D, YYYY");
-    
-        let isSandwich = false;
-        let numOfDays = endDate.diff(startDate, "days") + 1;
-        let leaveType = value;
+      const startDate = moment(formData.fromdate, "MMMM D, YYYY");
+      const endDate = moment(formData.todate, "MMMM D, YYYY");
 
-        if (name === "fromdate" || name === "todate") {
-            for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
-                if (date.day() === 6 || date.day() === 0) { 
-                    isSandwich = true;
-                    leaveType = "Full Day"; 
-                    setDisableOptions(true); 
-                    break;
-                }
-            }
+      let isSandwich = false;
+      let numOfDays = endDate.diff(startDate, "days") + 1;
+      let leaveType = value;
+
+      if (name === "fromdate" || name === "todate") {
+        for (
+          let date = startDate.clone();
+          date.isSameOrBefore(endDate);
+          date.add(1, "days")
+        ) {
+          if (date.day() === 6 || date.day() === 0) {
+            isSandwich = true;
+            leaveType = "Full Day";
+            setDisableOptions(true);
+            break;
+          }
         }
-        if (name === "leavetype" && leaveType === "Full Day") {
-            for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
-                if (date.day() === 6 || date.day() === 0) {
-                    isSandwich = true;
-                    setDisableOptions(true);
-                    break;
-                }
-            }
-
-            if (startDate.day() === 1 && formData.isFridayLeaveApproved) {
-                isSandwich = true;
-                numOfDays += 2; 
-            }
+      }
+      if (name === "leavetype" && leaveType === "Full Day") {
+        for (
+          let date = startDate.clone();
+          date.isSameOrBefore(endDate);
+          date.add(1, "days")
+        ) {
+          if (date.day() === 6 || date.day() === 0) {
+            isSandwich = true;
+            setDisableOptions(true);
+            break;
+          }
         }
 
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            leavetype: leaveType,
-            issandwich: isSandwich ? "Yes" : "No",
-            noofdays: numOfDays,
-        }));
+        if (startDate.day() === 1 && formData.isFridayLeaveApproved) {
+          isSandwich = true;
+          numOfDays += 2;
+        }
+      }
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        leavetype: leaveType,
+        issandwich: isSandwich ? "Yes" : "No",
+        noofdays: numOfDays,
+      }));
     } else {
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: value,
-        }));
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
     }
-};
+  };
 
   const handleSelectChange = (selectedOptions) => {
     setSelected(selectedOptions);
@@ -185,17 +227,120 @@ const ApplyLeave = () => {
     }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const userId = localStorage.getItem("user_id");
+  //   const authToken = localStorage.getItem("token");
+  //   const leaveData = {
+  //     ...formData,
+  //     user_id: userId,
+  //     fromdate: formData.fromdate,
+  //     todate: formData.todate,
+  //   };
+
+  //   const previousFormData = { ...formData };
+  //   setFormData({
+  //     ...formData,
+  //     leavetype: "",
+  //     leavecategory: "",
+  //     cc: [],
+  //     reason: "",
+  //     daterange: "",
+  //     noofdays: "",
+  //     issandwich: "",
+  //     user_id: "",
+  //   });
+  //   try {
+  //     const response = await axios.post(`${baseURL}/add-leave`, leaveData, {
+  //       headers: {
+  //         Authorization: `Bearer ${authToken}`,
+  //       },
+  //     });
+
+  //     if (response.status === 200) {
+  //       Swal.fire({
+  //         position: "top-center",
+  //         icon: "success",
+  //         title: "Leave request sent successfully",
+  //         showConfirmButton: false,
+  //         timer: 1600,
+  //       });
+  //       navigate("/user");
+  //     } else {
+  //       setError("Error submitting leave request");
+  //       setFormData(previousFormData);
+  //     }
+  //   } catch (error) {
+  //     setError("Error submitting leave request");
+  //     console.error("Error:", error);
+  //     setFormData(previousFormData);
+  //   }
+  // };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userId = localStorage.getItem("user_id");
     const authToken = localStorage.getItem("token");
+  
+   
+    if (!formData.daterange) {
+      setError("Please select a valid date range.");
+      Swal.fire({
+        icon: "error",
+        title: "Please select a valid date range.",
+        text: "Please select a valid date range.",
+      });
+      return;
+    }
+  
+    if (!formData.leavecategory) {
+      setError("Please select a leave category.");
+      Swal.fire({
+        icon: "error",
+        title: "Please select a leave category.",
+       
+      });
+      return;
+    }
+  
+    if (!formData.leavetype) {
+      setError("Please select a leave type.");
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Please select a leave type.",
+      });
+      return;
+    }
+  
+    if (selected.length === 0) {
+      setError("Please select at least one recipient (CC).");
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Please select at least one recipient (CC).",
+      });
+      return;
+    }
+  
+    if (!formData.reason) {
+      setError("Please provide a reason for your leave.");
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Please provide a reason for your leave.",
+      });
+      return;
+    }
+    
     const leaveData = {
       ...formData,
       user_id: userId,
       fromdate: formData.fromdate,
       todate: formData.todate,
     };
-
+  
     const previousFormData = { ...formData };
     setFormData({
       ...formData,
@@ -208,21 +353,21 @@ const ApplyLeave = () => {
       issandwich: "",
       user_id: "",
     });
+  
     try {
       const response = await axios.post(`${baseURL}/add-leave`, leaveData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
-     
+  
       if (response.status === 200) {
-       
         Swal.fire({
           position: "top-center",
           icon: "success",
           title: "Leave request sent successfully",
           showConfirmButton: false,
-          timer: 1600
+          timer: 1600,
         });
         navigate("/user");
       } else {
@@ -235,6 +380,7 @@ const ApplyLeave = () => {
       setFormData(previousFormData);
     }
   };
+  
 
   const options = [
     { label: "sankalp@ycstech.in", value: "sankalp@ycstech.in" },
@@ -262,6 +408,7 @@ const ApplyLeave = () => {
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <input
+               
                   type="text"
                   name="daterange"
                   value={formData.daterange}
@@ -285,6 +432,7 @@ const ApplyLeave = () => {
                   <option value="Personal Leave">Personal Leave</option>
                 </select>
               </div>
+
               <div className="mb-4">
                 <select
                   name="leavetype"
@@ -309,32 +457,22 @@ const ApplyLeave = () => {
                 </select>
               </div>
 
-              {/* <div className="mb-4">
+              <div className="mb-4">
                 <MultiSelect
                   options={options}
                   value={selected}
                   onChange={handleSelectChange}
-                  labelledBy="Select cc field"
+                  labelledBy="Select CC"
+                  hasSelectAll={false}
+                  overrideStrings={{
+                    selectSomeItems: "Select recipients (CC)",
+                    allItemsAreSelected: "All recipients (CC) selected",
+                    selectAll: "Select all recipients",
+                    search: "Search recipients...",
+                    clearSearch: "Clear search",
+                  }}
                 />
-              </div> */}
-              
-              <div className="mb-4">
-  <MultiSelect
-    options={options}
-    value={selected}
-    onChange={handleSelectChange}
-    labelledBy="Select CC"
-    hasSelectAll={false} 
-    overrideStrings={{
-      selectSomeItems: "Select recipients (CC)", 
-      allItemsAreSelected: "All recipients selected",
-      selectAll: "Select all recipients",
-      search: "Search recipients...",
-      clearSearch: "Clear search",
-    }}
-  />
-</div>
-
+              </div>
 
               <div className="mb-4">
                 <input
@@ -343,7 +481,7 @@ const ApplyLeave = () => {
                   name="noofdays"
                   type="text"
                   placeholder="Number of days"
-                  value={formData.noofdays}
+                  value={`No of Days: ${formData.noofdays}`}
                   readOnly
                 />
               </div>
@@ -354,12 +492,17 @@ const ApplyLeave = () => {
                   name="issandwich"
                   type="text"
                   placeholder="Sandwich Leave?"
-                  value={formData.issandwich}
+                  value={
+                    formData.issandwich === "Yes"
+                      ? "Sandwich Leave"
+                      : "No Sandwich Leave"
+                  }
                   readOnly
                 />
               </div>
               <div className="mb-4">
                 <textarea
+                
                   name="reason"
                   value={formData.reason}
                   onChange={handleChange}
@@ -391,7 +534,3 @@ const ApplyLeave = () => {
 };
 
 export default ApplyLeave;
-
-
-
-

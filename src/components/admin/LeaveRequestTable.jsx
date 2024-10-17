@@ -76,14 +76,14 @@ export function LeaveRequestTable() {
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="font-medium text-black">Sr no</TableHead>
+            <TableHead className="font-medium text-black">Sr No</TableHead>
             <TableHead className="font-medium text-black">Name</TableHead>
-            <TableHead className="font-medium text-black">Leave type</TableHead>
-            <TableHead className="font-medium text-black">Leave category</TableHead>
+            <TableHead className="font-medium text-black">Leave Type</TableHead>
+            <TableHead className="font-medium text-black">Leave Category</TableHead>
             <TableHead className="font-medium text-black">Sandwich Leave</TableHead>
-            <TableHead className="font-medium text-black">From date</TableHead>
-            <TableHead className="font-medium text-black">To date</TableHead>
-            <TableHead className="font-medium text-black">No of Days</TableHead>
+            <TableHead className="font-medium text-black">From Date</TableHead>
+            <TableHead className="font-medium text-black">To Date</TableHead>
+            <TableHead className="font-medium text-black">No Of Days</TableHead>
             <TableHead className="font-medium text-black">Status</TableHead>
             <TableHead className="font-medium text-black">Details</TableHead>
           </TableRow>

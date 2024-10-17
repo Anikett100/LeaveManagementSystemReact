@@ -75,7 +75,7 @@ export function LeaveRequestTable() {
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="font-medium text-black">Sr no</TableHead>
+            <TableHead className="font-medium text-black">Sr No</TableHead>
             <TableHead className="font-medium text-black">Name</TableHead>
             <TableHead className="font-medium text-black">Leave type</TableHead>
             <TableHead className="font-medium text-black">Leave category</TableHead>

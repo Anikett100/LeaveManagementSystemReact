@@ -89,7 +89,6 @@ export function TableDemo() {
   
       if ((name === "fromdate" || name === "todate") && updatedFormData.fromdate && updatedFormData.todate) {
         if (new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
-          // alert("The 'To Date' cannot be earlier than the 'From Date'.");
           Swal.fire({
             position: "top-center",
             icon: "warning",
@@ -141,7 +140,6 @@ export function TableDemo() {
   
       if (updatedFormData.fromdate && updatedFormData.todate) {
         if (dateField === "todate" && new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
-          // alert("The 'To Date' cannot be earlier than the 'From Date'.");
           Swal.fire({
             position: "top-center",
             icon: "warning",
@@ -152,7 +150,6 @@ export function TableDemo() {
           updatedFormData.todate = "";
           updatedFormData.noofdays = "";
         } else if (dateField === "fromdate" && new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
-          // alert("The 'To Date' cannot be earlier than the 'From Date'.");
           Swal.fire({
             position: "top-center",
             icon: "warning",
@@ -222,12 +219,12 @@ export function TableDemo() {
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="">Sr no</TableHead>
-            <TableHead>Leave type</TableHead>
-            <TableHead>Leave category</TableHead>
-            <TableHead className="">From date</TableHead>
-            <TableHead className="">To date</TableHead>
-            <TableHead className="">No of Days</TableHead>
+            <TableHead className="">Sr No</TableHead>
+            <TableHead>Leave Type</TableHead>
+            <TableHead>Leave Category</TableHead>
+            <TableHead className="">From Date</TableHead>
+            <TableHead className="">To Date</TableHead>
+            <TableHead className="">No Of Days</TableHead>
             <TableHead className="">Reason</TableHead>
             <TableHead className="">Status</TableHead>
             <TableHead className="">View</TableHead>

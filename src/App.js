@@ -22,6 +22,9 @@ import ApplyManagerLeave from './components/manager/ApplyManagerLeave';
 import UpdataeManagerLeave from './components/manager/UpdataeManagerLeave';
 import ManagerLeavDetails from './components/manager/ManagerLeavDetails';
 
+
+
+
 function App() {
   return (
     <Router>
