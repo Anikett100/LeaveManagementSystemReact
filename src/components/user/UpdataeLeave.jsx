@@ -167,15 +167,13 @@ function UpdateLeave() {
       });
       return;
     }
-  
-    // Prepare leave data for submission
+
     const leaveData = {
       ...formData,
       user_id: userId,
     };
   
     try {
-      // Update the leave request by making an API call
       const response = await axios.post(`${baseURL}/update-leave/${id}`, leaveData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
@@ -190,7 +188,7 @@ function UpdateLeave() {
           showConfirmButton: false,
           timer: 1500,
         });
-        handleCloseModal(); // Close the modal after a successful update
+        handleCloseModal(); 
         navigate("/user");
       } else {
         setError("Error updating leave request.");

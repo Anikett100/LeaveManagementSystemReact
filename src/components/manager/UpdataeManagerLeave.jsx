@@ -78,37 +78,114 @@ function UpdataeManagerLeave() {
     }));
   };
 
-  const handleSubmit = async e => {
+  // const handleSubmit = async e => {
+  //   e.preventDefault();
+  //   const authToken = localStorage.getItem('token');
+  //   const userId = localStorage.getItem('user_id');
+  //   const leaveData = {
+  //     ...formData,
+  //     user_id: userId,
+
+  //   };
+
+  //   try {
+  //     await axios.post(`${baseURL}/update-managerleave/${id}`, leaveData, {
+  //       headers: {
+  //         Authorization: `Bearer ${authToken}`,
+  //       },
+  //     });
+  //     // alert('Leave request updated successfully');
+  //     Swal.fire({
+  //       position: "top-center",
+  //       icon: "success",
+  //       title: "Leave request updated successfully",
+  //       showConfirmButton: false,
+  //       timer: 1500
+  //     });
+  //     handleCloseModal();
+  //     navigate('/manager'); 
+  //   } catch (error) {
+  //     setError('Error updating leave request');
+  //     console.error('Error:', error);
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const authToken = localStorage.getItem('token');
     const userId = localStorage.getItem('user_id');
+  
+    // Validation
+    if (!formData.daterange) {
+      setError("Please select a valid date range.");
+      Swal.fire({
+        icon: "error",
+        title: "Please select a valid date range.",
+        text: "A valid date range is required to update the leave request.",
+      });
+      return;
+    }
+  
+    if (!formData.leavecategory) {
+      setError("Please select a leave category.");
+      Swal.fire({
+        icon: "error",
+        title: "Please select a leave category.",
+      });
+      return;
+    }
+  
+    if (!formData.leavetype) {
+      setError("Please select a leave type.");
+      Swal.fire({
+        icon: "error",
+        title: "Please select a leave type.",
+      });
+      return;
+    }
+  
+    if (!formData.reason) {
+      setError("Please provide a reason for the leave request.");
+      Swal.fire({
+        icon: "error",
+        title: "Please provide a reason.",
+        text: "A reason is required for the leave request.",
+      });
+      return;
+    }
+  
     const leaveData = {
       ...formData,
       user_id: userId,
-
     };
-
+  
     try {
-      await axios.post(`${baseURL}/update-managerleave/${id}`, leaveData, {
+      const response = await axios.post(`${baseURL}/update-managerleave/${id}`, leaveData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
-      // alert('Leave request updated successfully');
-      Swal.fire({
-        position: "top-center",
-        icon: "success",
-        title: "Leave request updated successfully",
-        showConfirmButton: false,
-        timer: 1500
-      });
-      handleCloseModal();
-      navigate('/manager'); 
+  
+      if (response.status === 200) {
+        Swal.fire({
+          position: "top-center",
+          icon: "success",
+          title: "Leave request updated successfully",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        handleCloseModal();
+        navigate('/manager');
+      } else {
+        setError('Error updating leave request.');
+      }
     } catch (error) {
-      setError('Error updating leave request');
+      setError('Error updating leave request.');
       console.error('Error:', error);
     }
   };
+  
+
 
 const handleSelectDate = async (start, end) => {
   const today = moment().startOf("day");
@@ -326,7 +403,7 @@ const handleChange = (e) => {
                   name="noofdays"
                   type="text"
                   placeholder="Number of days"
-                  value={formData.noofdays}
+                  value={`No of Days: ${formData.noofdays}`}
                   readOnly
                 />
               </div>
@@ -337,7 +414,11 @@ const handleChange = (e) => {
                   name="issandwich"
                   type="text"
                   placeholder="Sandwich Leave?"
-                  value={formData.issandwich}
+                  value={
+                    formData.issandwich === "Yes"
+                      ? "Sandwich Leave"
+                      : "No Sandwich Leave"
+                  }
                   readOnly
                 />
               </div>

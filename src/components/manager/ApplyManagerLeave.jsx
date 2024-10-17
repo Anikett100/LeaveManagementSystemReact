@@ -183,17 +183,111 @@ const ApplyManagerLeave = () => {
     
     }));
   };
+
+  
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const authToken = localStorage.getItem("token");
+  //   const userId = localStorage.getItem("user_id");
+  //   const leaveData = {
+  //     ...formData,
+  //     user_id: userId,
+  //     fromdate: formData.fromdate,
+  //     todate: formData.todate,
+  //   };
+
+  //   const previousFormData = { ...formData };
+  //   setFormData({
+  //     ...formData,
+  //     leavetype: "",
+  //     leavecategory: "",
+  //     reason: "",
+  //     daterange: "",
+  //     noofdays: "",
+  //     issandwich: "",
+  //     user_id: "",    
+  //   });
+
+  //   try {
+  //     const response = await axios.post(`${baseURL}/add-managerleave`, leaveData, {
+  //       headers: {
+  //         Authorization: `Bearer ${authToken}`,
+  //       },
+  //     });
+  //     if (response.status === 200) {
+  //       // alert("Leave request sent successfully");
+  //       Swal.fire({
+  //         position: "top-center",
+  //         icon: "success",
+  //         title: "Leave request sent successfully",
+  //         showConfirmButton: false,
+  //         timer: 1500
+  //       });
+  //         navigate("/manager");
+  //     } else {
+  //       setError("Error submitting leave request");
+  //       setFormData(previousFormData);
+  //     }
+  //   } catch (error) {
+  //     setError("Error submitting leave request");
+  //     console.error("Error:", error);
+  //     setFormData(previousFormData);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const authToken = localStorage.getItem("token");
     const userId = localStorage.getItem("user_id");
+  
+       if (!formData.daterange) {
+      setError("Please select a valid date range.");
+      Swal.fire({
+        icon: "error",
+        title: "Please select a valid date range.",
+        text: "Please select a valid date range.",
+      });
+      return;
+    }
+  
+    if (!formData.leavecategory) {
+      setError("Please select a leave category.");
+      Swal.fire({
+        icon: "error",
+        title: "Please select a leave category.",
+        text: "Please select a leave category.",
+      });
+      return;
+    }
+  
+    if (!formData.leavetype) {
+      setError("Please select a leave type.");
+      Swal.fire({
+        icon: "error",
+        title: "Please select a leave type.",
+        text: "Please select a leave type.",
+      });
+      return;
+    }
+  
+  
+    if (!formData.reason) {
+      setError("Please provide a reason for your leave.");
+      Swal.fire({
+        icon: "error",
+        title: "Please provide a reason for your leave.",
+        text: "Please provide a reason for your leave.",
+      });
+      return;
+    }
+  
     const leaveData = {
       ...formData,
       user_id: userId,
       fromdate: formData.fromdate,
       todate: formData.todate,
     };
-
+  
     const previousFormData = { ...formData };
     setFormData({
       ...formData,
@@ -203,25 +297,25 @@ const ApplyManagerLeave = () => {
       daterange: "",
       noofdays: "",
       issandwich: "",
-      user_id: "",    
+      user_id: "",
     });
-
+  
     try {
       const response = await axios.post(`${baseURL}/add-managerleave`, leaveData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
+  
       if (response.status === 200) {
-        // alert("Leave request sent successfully");
         Swal.fire({
           position: "top-center",
           icon: "success",
           title: "Leave request sent successfully",
           showConfirmButton: false,
-          timer: 1500
+          timer: 1500,
         });
-          navigate("/manager");
+        navigate("/manager");
       } else {
         setError("Error submitting leave request");
         setFormData(previousFormData);
@@ -232,6 +326,9 @@ const ApplyManagerLeave = () => {
       setFormData(previousFormData);
     }
   };
+  
+
+
   const options = [
     { label: "sankalp@ycstech.in", value: "sankalp@ycstech.in" },   
   ];
@@ -309,7 +406,7 @@ const ApplyManagerLeave = () => {
                   name="noofdays"
                   type="text"
                   placeholder="Number of days"
-                  value={formData.noofdays}
+                  value={`No of Days: ${formData.noofdays}`}
                   readOnly
                 />
               </div>
@@ -320,7 +417,11 @@ const ApplyManagerLeave = () => {
                   name="issandwich"
                   type="text"
                   placeholder="Sandwich Leave?"
-                  value={formData.issandwich}
+                  value={
+                    formData.issandwich === "Yes"
+                      ? "Sandwich Leave"
+                      : "No Sandwich Leave"
+                  }
                   readOnly
                 />
               </div>

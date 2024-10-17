@@ -12,7 +12,7 @@ function ManagerLeaveRequests() {
     <div className="flex flex-col flex-1">
       <Header/>
       <div className='container'>
-      <h1 className='text-3xl font-bold ml-3 mt-2 mb-1'>Leave Requests</h1>
+      <h1 className='text-3xl font-bold ml-3 mt-2 mb-1 text-[#484C7F]'>Leave Requests</h1>
       </div>
       <hr></hr>
       <div className="p-4">

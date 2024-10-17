@@ -49,7 +49,7 @@ export function LeaveRequestTable() {
   const getStatusClass = (status) => {
     switch (status) {
       case "Approved":
-        return "bg-green-500 text-white";
+        return "bg-green-500 text-white"; 
       case "Cancelled":
         return "bg-red-400 text-white";
       case "Pending":
@@ -93,7 +93,7 @@ export function LeaveRequestTable() {
             className={`
               ${leave.status === "Approved" ? "text-green-800" : 
                leave.status === "Cancelled" ? "text-red-600" : 
-               leave.status === "pending" ? "text-yellow-600" : 
+               leave.status === "Pending" ? "text-yellow-600" : 
                "text-gray-500"}
             `}
             >

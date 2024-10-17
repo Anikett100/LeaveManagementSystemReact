@@ -43,28 +43,84 @@ export function TableDemo() {
     }
   };
 
+  // const deleteLeave = async (id) => {
+  //   const confirmed = window.confirm("Are you sure you want to delete this leave?");
+  //   if (!confirmed) {
+  //     return;
+  //   }
+
+  //   try {
+  //     await axios.delete(`${baseURL}/delete-managerleave/${id}`);
+  //     setLeaves(leaves.filter((leave) => leave.id !== id));
+  //   } catch (error) {
+  //     if (error.response && error.response.status === 403) {
+       
+  //       Swal.fire({
+  //         position: "top-center",
+  //         icon: "warning",
+  //         title: "You cannot delete this leave as it has been approved by the admin.",
+  //         showConfirmButton: false,
+  //         timer: 1500
+  //       });
+  //     } else {
+  //       console.error("Error deleting leave:", error);
+  //       alert("An error occurred while trying to delete the leave.");
+  //     }
+  //   }
+  // };
+
   const deleteLeave = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to delete this leave?");
-    if (!confirmed) {
+    const confirmed = await Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you really want to delete this leave?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it'
+    });
+  
+    if (!confirmed.isConfirmed) {
       return;
     }
-
+  
+  
+    Swal.fire({
+      title: 'Deleting leave...',
+      icon: 'info',
+      showConfirmButton: false,
+      timer: 1500
+    });
+  
     try {
       await axios.delete(`${baseURL}/delete-managerleave/${id}`);
       setLeaves(leaves.filter((leave) => leave.id !== id));
+  
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'Leave deleted successfully!',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 1500
+      });
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        // alert("You cannot delete this leave as it has been approved by the admin.");
         Swal.fire({
-          position: "top-center",
-          icon: "warning",
-          title: "You cannot delete this leave as it has been approved by the admin.",
+          title: 'Warning!',
+          text: 'You cannot delete this leave as it has been approved by the admin.',
+          icon: 'warning',
           showConfirmButton: false,
           timer: 1500
         });
       } else {
         console.error("Error deleting leave:", error);
-        alert("An error occurred while trying to delete the leave.");
+        Swal.fire({
+          title: 'Error!',
+          text: 'An error occurred while trying to delete the leave.',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
       }
     }
   };
@@ -237,7 +293,7 @@ export function TableDemo() {
             className={`
               ${leave.status === "Approved" ? "text-green-800" : 
                leave.status === "Cancelled" ? "text-red-600" : 
-               leave.status === "pending" ? "text-yellow-600" : 
+               leave.status === "Pending" ? "text-yellow-600" : 
                "text-gray-500"}
             `}
             >
