@@ -34,13 +34,13 @@ export default function Index() {
       <div className="container">
         <div className="flex justify-end mt-4 space-x-2">
           <Link to='/apply-leave'>
-            <Button className="bg-[#484C7F] flex items-center">
+            <Button className="bg-[#324983] flex items-center">
               <CirclePlus className="w-5 h-5 mr-2" />
               Apply Leave
             </Button>
           </Link>
           <Link to='/user-holidays'>
-            <Button className="bg-[#FF6347] flex items-center">
+            <Button className="bg-[#BC2127] flex items-center">
               Holidays
             </Button>
           </Link>
@@ -48,7 +48,7 @@ export default function Index() {
         <div className="mt-4">
           {user && (
             <div className="text-black text-xl">
-             <h1 className='text-2xl text-[#484C7F] font-bold ml-3 mt-2'>  Carry Forward Leaves: {user.paidleaves}</h1>
+             <h1 className='text-2xl text-[#324983] font-bold ml-3 mt-2'>  Carry Forward Leaves: {user.paidleaves}</h1>
             </div>
           )}
         </div>

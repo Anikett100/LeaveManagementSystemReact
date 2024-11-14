@@ -15,7 +15,7 @@ const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 
 export function HolidayTable() {
-  const ITEMS_PER_PAGE = 4;
+  const ITEMS_PER_PAGE = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [holidays, setHolidays] = useState([]);
   const fetchHolidays = async () => {
@@ -42,7 +42,7 @@ export function HolidayTable() {
   );
 
   return (
-    <div className="container-fluid ">
+    <div className="container-fluid mb-14 ">
       <Table className="mt-2">
         <TableHeader>
           <TableRow>

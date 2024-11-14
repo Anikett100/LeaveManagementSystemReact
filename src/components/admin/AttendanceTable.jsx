@@ -53,14 +53,13 @@ function AttendanceTable() {
             <CheckCircle size={16} color="#28a745" className="mr-2"/> Present
           </div>
         </div>
-
-         
+        
           <div className="flex justify-end">
           <select
             id="month-select"
             value={selectedMonth}
             onChange={handleMonthChange}
-            className="border px-2 py-1 rounded"
+            className="border px-2 py-1 rounded bg-[#324983] text-white"
           >
             {Array.from({ length: currentMonth }, (_, i) => (
               <option key={i + 1} value={i + 1}>
@@ -124,5 +123,4 @@ function AttendanceTable() {
     </div>
   );
 }
-
 export default AttendanceTable;

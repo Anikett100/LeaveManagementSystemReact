@@ -9,11 +9,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from ".
 import { Trash2, FilePenLine } from "lucide-react";
 import moment from "moment";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
-
-
 export default function HolidayTable() {
-  const ITEMS_PER_PAGE = 4; 
-  const [currentPage, setCurrentPage] = useState(1);
   const [holidays, setHolidays] = useState([]);
   const [currentHoliday, setCurrentHoliday] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -116,34 +112,26 @@ export default function HolidayTable() {
     setShowCalendarModal(true);
   };
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-  const totalPages = Math.ceil(holidays.length / ITEMS_PER_PAGE);
-
-  const currentItems = holidays.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid mb-14">
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-black">Sr no</TableHead>
-            <TableHead className="text-black">Day</TableHead>
-            <TableHead className="text-black">Date</TableHead>
-            <TableHead className="text-black">Holiday Name</TableHead>
-            <TableHead className="text-black">Type</TableHead>
+            <TableHead className="text-black font-medium">Sr no</TableHead>
+            <TableHead className="text-black font-medium">Day</TableHead>
+            <TableHead className="text-black font-medium">Date</TableHead>
+            <TableHead className="text-black font-medium">Holiday Name</TableHead>
+            <TableHead className="text-black font-medium">Type</TableHead>
             <TableHead className="text-black text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {currentItems .map((holiday, index) => (
+        <TableBody className="">
+          {holidays.map((holiday, index) => (
             <TableRow
               key={holiday.id}
-              className={`${holiday.type === "Holiday" ? "text-red-600" : "text-green-800"}`}
+              className=  {`${holiday.type === "Holiday" ? "text-red-600" : "text-green-800"}`}
             >
               <TableCell>{index + 1}</TableCell>
               <TableCell>{holiday.day}</TableCell>
@@ -171,26 +159,7 @@ export default function HolidayTable() {
         </TableBody>
       </Table>
 
-          {/* Pagination */}
-          <div className="flex justify-between items-center mt-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-        >
-          Previous
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-        >
-          Next
-        </button>
-      </div>
+         
       
       {showForm && (
         <HolidayModal show={showForm} onClose={handleCloseModal}>

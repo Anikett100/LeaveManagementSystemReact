@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -6,7 +5,7 @@ const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 export default function Header() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null); 
+  const [user, setUser] = useState(null);
 
   const handleDropdownToggle = () => {
     setDropdownOpen(!dropdownOpen);
@@ -18,16 +17,35 @@ export default function Header() {
     }
   };
 
+  // const fetchUser = async () => {
+  //   try {
+  //     const response = await axios.get(`${baseURL}/get-user`, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`
+  //       }
+  //     });
+  //     setUser(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching user data:", error);
+  //   }
+  // };
+
   const fetchUser = async () => {
     try {
       const response = await axios.get(`${baseURL}/get-user`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       setUser(response.data);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      if (error.response && error.response.status === 401) {
+        console.error("User is not authenticated. Redirecting to login.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        console.error("Error fetching user data:", error);
+      }
     }
   };
 
@@ -44,23 +62,23 @@ export default function Header() {
   }, [dropdownOpen]);
 
   useEffect(() => {
-    fetchUser(); 
+    fetchUser();
   }, []);
 
   return (
     <nav className="bg-gray-200 p-4 h-24">
       <div className="md:container md:mx-auto flex justify-between items-center">
-        <Link  to='/user'>
-        <div className="w-40">
-          <img className="h-14" src="/companyLogo.svg" alt="Company Logo" />
-        </div>
+        <Link to="/user">
+          <div className="w-40">
+            <img className="h-14" src="/companyLogo.svg" alt="Company Logo" />
+          </div>
         </Link>
         <div className="flex items-center space-x-4">
           <div className="relative">
             <h2
               id="dropdownToggle"
               onClick={handleDropdownToggle}
-              className="text-black cursor-pointer"
+              className="te xt-black cursor-pointer"
             >
               {user ? user.name : "Loading..."}
             </h2>
@@ -85,10 +103,3 @@ export default function Header() {
     </nav>
   );
 }
-
-
-
-
-
-
-

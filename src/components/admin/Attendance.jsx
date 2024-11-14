@@ -14,8 +14,7 @@ function Attendance() {
           <Header/>
           <div className="">
           <AttendanceTable /> 
-          </div>
-         
+          </div>         
         </div>
       </div>
       <Footer/>

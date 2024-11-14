@@ -49,7 +49,7 @@ function AdminLeaveDetails() {
           <Header />
           <div className="flex-1 overflow-y-auto">
             <div className="container mx-auto mb-8 p-6 bg-white shadow-lg rounded-lg">
-              <h1 className="text-4xl font-bold mb-8 text-center text-purple-600">Leave Details</h1>
+              <h1 className="text-4xl font-bold mb-8 text-center text-[#324983]">Leave Details</h1>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div className="flex flex-col bg-gray-100 p-4 rounded-lg">
                   <p className="font-semibold text-gray-800">Leave Type:</p>

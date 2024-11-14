@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CircleX, FilePenLine } from "lucide-react";
+import { BookmarkX, CircleX, FilePenLine } from "lucide-react";
 import axios from "axios";
 import Modal from "../user/Modal";
 import { Button } from "../ui/Button";
@@ -14,7 +14,7 @@ import {
 } from "../ui/Table";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-const ITEMS_PER_PAGE = 4; 
+const ITEMS_PER_PAGE = 10; 
 
 export function TableDemo() {
   const [leaves, setLeaves] = useState([]);
@@ -22,6 +22,9 @@ export function TableDemo() {
   const [currentLeave, setCurrentLeave] = useState(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showReasonInput, setShowReasonInput] = useState(false);
+  const [reason, setReason] = useState("");
+  const [leaveToCancel, setLeaveToCancel] = useState(null);
   const [formData, setFormData] = useState({
     leavecategory: "",
     leavetype: "",
@@ -42,32 +45,6 @@ export function TableDemo() {
       console.error("Error fetching data:", error);
     }
   };
-
-  // const deleteLeave = async (id) => {
-  //   const confirmed = window.confirm("Are you sure you want to delete this leave?");
-  //   if (!confirmed) {
-  //     return;
-  //   }
-
-  //   try {
-  //     await axios.delete(`${baseURL}/delete-managerleave/${id}`);
-  //     setLeaves(leaves.filter((leave) => leave.id !== id));
-  //   } catch (error) {
-  //     if (error.response && error.response.status === 403) {
-       
-  //       Swal.fire({
-  //         position: "top-center",
-  //         icon: "warning",
-  //         title: "You cannot delete this leave as it has been approved by the admin.",
-  //         showConfirmButton: false,
-  //         timer: 1500
-  //       });
-  //     } else {
-  //       console.error("Error deleting leave:", error);
-  //       alert("An error occurred while trying to delete the leave.");
-  //     }
-  //   }
-  // };
 
   const deleteLeave = async (id) => {
     const confirmed = await Swal.fire({
@@ -132,7 +109,7 @@ export function TableDemo() {
       fromdate: leave.fromdate, 
       todate: leave.todate, 
     });
-    setShowForm(true);
+    setShowForm(true);  
   };
 
   const handleChange = (e) => {
@@ -260,6 +237,41 @@ export function TableDemo() {
     return diffDays;
   };
 
+  const handleCancelClick = (leaveId) => {
+    setLeaveToCancel(leaveId);
+    setShowReasonInput(true);
+  };
+
+  const submitCancellationRequest = async () => {
+    if (reason.trim() === "") return alert("Please enter a reason for cancellation.");
+
+    try {
+      await cancelRequest(leaveToCancel, reason);
+      alert("Cancellation request sent!");
+      setShowReasonInput(false);
+      setReason("");
+    } catch (error) {
+      console.error("Error sending cancellation request:", error);
+      alert("Failed to send cancellation request.");
+    }
+  };
+
+  const cancelRequest = async (leaveId, reason) => {
+    try {
+      await axios.post(
+        `${baseURL}/cancel-leave/${leaveId}`, 
+        { reason }, 
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+    } catch (error) {
+      console.error('Error in cancellation request:', error);
+    }
+  };
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
@@ -271,20 +283,20 @@ export function TableDemo() {
   );
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid  mb-14">
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="">Sr No</TableHead>
-            <TableHead>Leave Type</TableHead>
-            <TableHead>Leave Category</TableHead>
-            <TableHead className="">From Date</TableHead>
-            <TableHead className="">To Date</TableHead>
-            <TableHead className="">No Of Days</TableHead>
-            <TableHead className="">Reason</TableHead>
-            <TableHead className="">Status</TableHead>
-            <TableHead className="">View</TableHead>
-            <TableHead className="">Action</TableHead>
+            <TableHead className="font-medium text-black">Sr No</TableHead>
+            <TableHead className="font-medium text-black">Leave Type</TableHead>
+            <TableHead className="font-medium text-black">Leave Category</TableHead>
+            <TableHead className="font-medium text-black">From Date</TableHead>
+            <TableHead className="font-medium text-black">To Date</TableHead>
+            <TableHead className="font-medium text-black">No Of Days</TableHead>
+            <TableHead className="font-medium text-black">Reason</TableHead>
+            <TableHead className="font-medium text-black">Status</TableHead>
+            <TableHead className="font-medium text-black">View</TableHead>
+            <TableHead className="font-medium text-black">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -293,7 +305,7 @@ export function TableDemo() {
             className={`
               ${leave.status === "Approved" ? "text-green-800" : 
                leave.status === "Cancelled" ? "text-red-600" : 
-               leave.status === "Pending" ? "text-yellow-600" : 
+               leave.status === "Pending" ? "text-yellow-500" : 
                "text-gray-500"}
             `}
             >
@@ -319,12 +331,24 @@ export function TableDemo() {
                   </button>
                   <Link to={`/update-managerleave/${leave.id}`}>
                   <button
-                  className={`rounded text-blue-600 transition ${leave.status === "Approved" ? "opacity-50 cursor-not-allowed" : ""}`}
+                  className={`rounded text-blue-600 mt-1 transition ${leave.status === "Approved" ? "opacity-50 cursor-not-allowed" : ""}`}
                   disabled={leave.status === "Approved"}
                   >
                     <FilePenLine />
                   </button>
                   </Link>
+
+                  <button
+                    className={`rounded text-blue-600 transition ${
+                      leave.status !== "Approved"
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    onClick={() => handleCancelClick(leave.id)}
+                    disabled={leave.status !== "Approved"}
+                  >
+                    <BookmarkX />
+                  </button>
                 </div>
               </TableCell>
             </TableRow>
@@ -466,6 +490,34 @@ export function TableDemo() {
             </div>
           </form>
         </Modal>
+      )}
+
+{showReasonInput && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-1/3">
+            <h3 className="text-xl text-center text-[#484C7F] mb-4">Leave Cancellation Reason</h3>
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Enter cancellation reason"
+              className="w-full p-2 border rounded"
+            />
+            <div className="flex justify-end mt-4 space-x-2">
+              <button
+                onClick={submitCancellationRequest}
+                className="px-4 py-2 bg-[#484C7F] text-white rounded"
+              >
+                Submit
+              </button>
+              <button
+                onClick={() => setShowReasonInput(false)}
+                className="px-4 py-2 bg-red-600 text-white rounded"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

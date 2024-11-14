@@ -33,7 +33,7 @@ function AttendanceTable() {
   };
 
   return (
-    <div className="container">
+    <div className="container mb-14">
       <div className="flex items-center justify-between mt-4 mb-4">  
        
         <div className="flex items-center space-x-4">
@@ -53,14 +53,12 @@ function AttendanceTable() {
             <CheckCircle size={16} color="#28a745" className="mr-2"/> Present
           </div>
         </div>
-
-         
           <div className="flex justify-end">
           <select
             id="month-select"
             value={selectedMonth}
             onChange={handleMonthChange}
-            className="border px-2 py-1 rounded"
+            className="border px-2 py-1 rounded bg-[#324983] text-white"
           >
             {Array.from({ length: currentMonth }, (_, i) => (
               <option key={i + 1} value={i + 1}>
@@ -71,7 +69,7 @@ function AttendanceTable() {
         </div>
       </div>
 
-      <table className="text-sm text-left text-gray-500 dark:text-gray-400">
+      <table className="text-sm text-left text-gray-700 dark:text-gray-400">
         <thead className="bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" className="py-3 px-6">Name</th>
@@ -83,7 +81,7 @@ function AttendanceTable() {
         <tbody>
           {attendanceData.map((employeeData, index) => (
             <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <td className=" text-black py-4 px-6">{employeeData.employee_name}</td>
+              <td className=" text-[#324983] py-4 px-6">{employeeData.employee_name}</td>
               {Array.from({ length: daysInMonth }, (_, i) => {
                 const day = i + 1;
                 if (day > today && selectedMonth === currentMonth) {

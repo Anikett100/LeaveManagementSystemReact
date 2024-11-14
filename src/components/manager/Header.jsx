@@ -17,24 +17,42 @@ const Header = () => {
       }
     };
 
+    // const fetchUser = async () => {
+    //   try {
+    //     const response = await axios.get(`${baseURL}/get-user`, {
+    //       headers: {
+    //         Authorization: `Bearer ${localStorage.getItem("token")}` 
+    //       }
+    //     });
+    //     setUser(response.data);
+    //   } catch (error) {
+    //     console.error("Error fetching user data:", error);
+    //   }
+    // };
+
     const fetchUser = async () => {
       try {
         const response = await axios.get(`${baseURL}/get-user`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}` 
-          }
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
         setUser(response.data);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        if (error.response && error.response.status === 401) {
+          console.error("User is not authenticated. Redirecting to login.");
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        } else {
+          console.error("Error fetching user data:", error);
+        }
       }
     };
+  
 
     useEffect(() => {
       fetchUser(); 
     }, [])
-  
-
   
     useEffect(() => {
       if (dropdownOpen) {
@@ -51,9 +69,6 @@ const Header = () => {
     return (
       <nav className="bg-[#F9FBFD] p-4 h-24 w-full">
         <div className="md:container md:mx-auto flex justify-end items-center">
-          {/* <div className="w-40">
-            <img className="h-14" src="/companyLogo.svg" alt="Company Logo" />
-          </div> */}
           <div className="flex items-center space-x-4">
             <div className="relative">
               <h2

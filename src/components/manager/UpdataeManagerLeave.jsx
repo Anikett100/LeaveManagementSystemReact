@@ -78,37 +78,6 @@ function UpdataeManagerLeave() {
     }));
   };
 
-  // const handleSubmit = async e => {
-  //   e.preventDefault();
-  //   const authToken = localStorage.getItem('token');
-  //   const userId = localStorage.getItem('user_id');
-  //   const leaveData = {
-  //     ...formData,
-  //     user_id: userId,
-
-  //   };
-
-  //   try {
-  //     await axios.post(`${baseURL}/update-managerleave/${id}`, leaveData, {
-  //       headers: {
-  //         Authorization: `Bearer ${authToken}`,
-  //       },
-  //     });
-  //     // alert('Leave request updated successfully');
-  //     Swal.fire({
-  //       position: "top-center",
-  //       icon: "success",
-  //       title: "Leave request updated successfully",
-  //       showConfirmButton: false,
-  //       timer: 1500
-  //     });
-  //     handleCloseModal();
-  //     navigate('/manager'); 
-  //   } catch (error) {
-  //     setError('Error updating leave request');
-  //     console.error('Error:', error);
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

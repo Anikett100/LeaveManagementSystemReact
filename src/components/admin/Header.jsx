@@ -17,18 +17,38 @@ const Header = () => {
       }
     };
   
+    // const fetchUser = async () => {
+    //   try {
+    //     const response = await axios.get(`${baseURL}/get-user`, {
+    //       headers: {
+    //         Authorization: `Bearer ${localStorage.getItem("token")}` 
+    //       }
+    //     });
+    //     setUser(response.data);
+    //   } catch (error) {
+    //     console.error("Error fetching user data:", error);
+    //   }
+    // };
+    
     const fetchUser = async () => {
       try {
         const response = await axios.get(`${baseURL}/get-user`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}` 
-          }
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
         setUser(response.data);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        if (error.response && error.response.status === 401) {
+          console.error("User is not authenticated. Redirecting to login.");
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        } else {
+          console.error("Error fetching user data:", error);
+        }
       }
     };
+  
 
     useEffect(() => {
       fetchUser(); 

@@ -5,7 +5,7 @@ import axios from "axios";
 import ManagerModal from "./ReasonModal";
 import { Link } from "react-router-dom";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
-const ITEMS_PER_PAGE = 4; 
+const ITEMS_PER_PAGE = 10; 
 
 export function LeaveRequestTable() {
   const [leaves, setLeaves] = useState([]);
@@ -13,6 +13,7 @@ export function LeaveRequestTable() {
   const [currentAction, setCurrentAction] = useState({ status: "", id: null });
   const [actionReason, setActionReason] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(""); 
 
 
   const fetchLeaves = async () => {
@@ -53,7 +54,7 @@ export function LeaveRequestTable() {
       case "Cancelled":
         return "bg-red-400 text-white";
       case "Pending":
-        return "bg-yellow-500 text-black";
+        return "bg-yellow-500 text-white";
       default:
         return "";
     }
@@ -61,22 +62,44 @@ export function LeaveRequestTable() {
 
   const totalPages = Math.ceil(leaves.length / ITEMS_PER_PAGE);
 
-  const currentItems = leaves.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  // const currentItems = leaves.slice(
+  //   (currentPage - 1) * ITEMS_PER_PAGE,
+  //   currentPage * ITEMS_PER_PAGE
+  // );
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+  const filteredLeaves = leaves.filter((leave) =>
+    leave.user?.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const currentItems = filteredLeaves.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
-    <div className="container-fluid mb-10">
+    <div className="container-fluid mb-14">
+
+<div className="mb-2 flex justify-between">
+      <h1 className="text-3xl text-[#324983] font-bold ml-3 mt-2 mb-1">
+                Leave Requests
+              </h1>
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border-2 border-[#324983]  rounded-lg px-3 py-2 focus:outline-none focus:border-blue-700"
+        />      
+  </div>
+      <hr/>
+
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
             <TableHead className="font-medium text-black">Sr No</TableHead>
-            <TableHead className="font-medium text-black">Name</TableHead>
+            <TableHead className="font-medium text-black">Name</TableHead>  
             <TableHead className="font-medium text-black">Leave type</TableHead>
             <TableHead className="font-medium text-black">Leave category</TableHead>
             <TableHead className="font-medium text-black">Sandwich Leave</TableHead>
@@ -93,7 +116,7 @@ export function LeaveRequestTable() {
             className={`
               ${leave.status === "Approved" ? "text-green-800" : 
                leave.status === "Cancelled" ? "text-red-600" : 
-               leave.status === "Pending" ? "text-yellow-600" : 
+               leave.status === "Pending" ? "text-yellow-500" : 
                "text-gray-500"}
             `}
             >
@@ -107,7 +130,7 @@ export function LeaveRequestTable() {
               <TableCell>{leave.noofdays}</TableCell>
               <TableCell>
                 <select
-                  className={`border rounded px-2 py-1 ${getStatusClass(leave.status)}`}
+                  className={`border rounded px-3 py-2 ${getStatusClass(leave.status)}`}
                   value={leave.status}
                   onChange={(e) => handleStatusChange(e.target.value, leave.id)}
                 >
@@ -171,8 +194,7 @@ export function LeaveRequestTable() {
         >
           Next
         </button>
-      </div>
-      
+      </div>  
     </div>
   );
 }
