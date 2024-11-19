@@ -158,6 +158,9 @@ const handleSelectDate = async (start, end) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (value.trim() !== "") {
+      setError((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    }
     
     if (name === "leavetype" || name === "fromdate" || name === "todate") {
         const startDate = moment(formData.fromdate, "MMMM D, YYYY");
@@ -219,47 +222,15 @@ const handleSelectDate = async (start, end) => {
     e.preventDefault();
     const authToken = localStorage.getItem("token");
     const userId = localStorage.getItem("user_id");
+    let formErrors = {};
+    if (!formData.daterange) formErrors.daterange = "* Date Range is required";
+    if (!formData.leavecategory) formErrors.leavecategory = "* Leave Category is required";
+    if (!formData.leavetype) formErrors.leavetype = "* Leave Type is required";
+    if (!formData.reason) formErrors.reason = "* Reason is required";
   
-       if (!formData.daterange) {
-      setError("Please select a valid date range.");
-      Swal.fire({
-        icon: "error",
-        title: "Please select a valid date range.",
-        text: "Please select a valid date range.",
-      });
-      return;
-    }
-  
-    if (!formData.leavecategory) {
-      setError("Please select a leave category.");
-      Swal.fire({
-        icon: "error",
-        title: "Please select a leave category.",
-        text: "Please select a leave category.",
-      });
-      return;
-    }
-  
-    if (!formData.leavetype) {
-      setError("Please select a leave type.");
-      Swal.fire({
-        icon: "error",
-        title: "Please select a leave type.",
-        text: "Please select a leave type.",
-      });
-      return;
-    }
-  
-  
-    if (!formData.reason) {
-      setError("Please provide a reason for your leave.");
-      Swal.fire({
-        icon: "error",
-        title: "Please provide a reason for your leave.",
-        text: "Please provide a reason for your leave.",
-      });
-      return;
-    }
+    setError(formErrors);
+    if (Object.keys(formErrors).length === 0) {
+       
   
     const leaveData = {
       ...formData,
@@ -305,7 +276,8 @@ const handleSelectDate = async (start, end) => {
       console.error("Error:", error);
       setFormData(previousFormData);
     }
-  };
+  }
+}
   
 
 
@@ -355,6 +327,7 @@ const handleSelectDate = async (start, end) => {
                   <option value="Casual Leave">Casual Leave</option>
                   <option value="Personal Leave">Personal Leave</option>
                 </select>
+                {error.leavecategory && <span className="text-red-500">{error.leavecategory}</span>}
               </div>
               <div className="mb-4">
                 <select
@@ -378,6 +351,7 @@ const handleSelectDate = async (start, end) => {
                     Short Leave
                   </option>
                 </select>
+                {error.leavetype && <span className="text-red-500">{error.leavetype}</span>}
               </div>
               <div className="mb-4">
                 <input
@@ -413,6 +387,7 @@ const handleSelectDate = async (start, end) => {
                   placeholder="Please add your reason"
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
+                 {error.reason && <span className="text-red-500">{error.reason}</span>}
               </div>
               <div className="flex justify-end mt-4">
                 <button

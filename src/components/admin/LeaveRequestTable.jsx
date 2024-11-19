@@ -243,12 +243,9 @@ export function LeaveRequestTable() {
   };
   const totalPages = Math.ceil(leaves.length / ITEMS_PER_PAGE);
 
-
   const filteredLeaves = leaves.filter((leave) =>
     leave.user?.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
- 
   const currentItems = filteredLeaves.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -267,8 +264,7 @@ export function LeaveRequestTable() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border-2 border-[#324983]  rounded-lg px-3 py-2 focus:outline-none focus:border-blue-700"
-        />
-       
+        />    
       </div>
       <hr/>
 
@@ -353,7 +349,6 @@ export function LeaveRequestTable() {
         </div>
       </AdminModal>
 
-      {/* Pagination */}
       <div className="flex justify-between items-center mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}

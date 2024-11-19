@@ -111,9 +111,6 @@ export default function HolidayTable() {
   const handleOpenCalendarModal = () => {
     setShowCalendarModal(true);
   };
-
-  
-
   return (
     <div className="container-fluid mb-14">
       <Table className="mt-5">
@@ -158,9 +155,6 @@ export default function HolidayTable() {
           ))}
         </TableBody>
       </Table>
-
-         
-      
       {showForm && (
         <HolidayModal show={showForm} onClose={handleCloseModal}>
         <form className="bg-white p-6 rounded-lg shadow-lg" onSubmit={handleUpdate}>

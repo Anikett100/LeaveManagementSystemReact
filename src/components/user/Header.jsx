@@ -66,7 +66,7 @@ export default function Header() {
   }, []);
 
   return (
-    <nav className="bg-gray-200 p-4 h-24">
+    <nav className="bg-[#cbe0f44d] p-4 h-24">
       <div className="md:container md:mx-auto flex justify-between items-center">
         <Link to="/user">
           <div className="w-40">

@@ -157,7 +157,7 @@ const FullScreenCalendar = ({ onSelectDate }) => {
     if (isHoliday) {
         backgroundColor = '!bg-red-500 !mt-2'; 
     } else if (approvedLeaves.some(leave => leave.title === event.title)) { 
-        backgroundColor = '!bg-green-500 !mt-2'; 
+        backgroundColor = '!bg-[#F27022y] !mt-2'; 
     }
 
     return {
