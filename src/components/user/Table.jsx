@@ -139,7 +139,7 @@ export function TableDemo() {
 
   return (
     <div className="container-fluid mb-14">
-      
+      <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md">
       <Table className="mt-5 ">
         <TableHeader>
           <TableRow className="" >
@@ -271,6 +271,7 @@ export function TableDemo() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
