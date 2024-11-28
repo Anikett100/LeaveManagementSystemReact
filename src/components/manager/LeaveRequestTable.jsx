@@ -59,19 +59,13 @@ export function LeaveRequestTable() {
       case "Cancelled":
         return "bg-red-400 text-white";
       case "Pending":
-        return "bg-yellow-500 text-white";
+        return "bg-yellow-400 text-white";
       default:
         return "";
     }
   };
 
   const totalPages = Math.ceil(leaves.length / ITEMS_PER_PAGE);
-
-  // const currentItems = leaves.slice(
-  //   (currentPage - 1) * ITEMS_PER_PAGE,
-  //   currentPage * ITEMS_PER_PAGE
-  // );
-
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
@@ -98,7 +92,7 @@ export function LeaveRequestTable() {
         />
       </div>
       <hr />
-
+       <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md" >
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
@@ -129,7 +123,7 @@ export function LeaveRequestTable() {
                   : leave.status === "Cancelled"
                   ? "text-red-600"
                   : leave.status === "Pending"
-                  ? "text-yellow-500"
+                  ? "text-yellow-400"
                   : "text-gray-500"
               }
             `}
@@ -166,6 +160,7 @@ export function LeaveRequestTable() {
           ))}
         </TableBody>
       </Table>
+      </div>
       <ManagerModal show={showReason} onClose={() => setShowReason(false)}>
         <div>
           <label
@@ -198,7 +193,6 @@ export function LeaveRequestTable() {
         </div>
       </ManagerModal>
 
-      {/* Pagination  */}
       <div className="flex justify-between items-center mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}

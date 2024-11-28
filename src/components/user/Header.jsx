@@ -17,19 +17,6 @@ export default function Header() {
     }
   };
 
-  // const fetchUser = async () => {
-  //   try {
-  //     const response = await axios.get(`${baseURL}/get-user`, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem("token")}`
-  //       }
-  //     });
-  //     setUser(response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching user data:", error);
-  //   }
-  // };
-
   const fetchUser = async () => {
     try {
       const response = await axios.get(`${baseURL}/get-user`, {
@@ -55,7 +42,6 @@ export default function Header() {
     } else {
       document.removeEventListener("click", handleOutsideClick);
     }
-
     return () => {
       document.removeEventListener("click", handleOutsideClick);
     };

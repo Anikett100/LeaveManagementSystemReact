@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import FullScreenCalendar from '../Calender';
-
 import { CircleX } from 'lucide-react';
 import { MultiSelect } from 'react-multi-select-component';
 import axios from 'axios';
@@ -64,8 +63,6 @@ function UpdataeManagerLeave() {
     fetchLeaveData();
   }, [id]);
   
-
-  
   const handleCloseModal = () => {
     setShowForm(false);
   };
@@ -78,13 +75,10 @@ function UpdataeManagerLeave() {
     }));
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const authToken = localStorage.getItem('token');
     const userId = localStorage.getItem('user_id');
-  
-    // Validation
     if (!formData.daterange) {
       setError("Please select a valid date range.");
       Swal.fire({
@@ -94,7 +88,6 @@ function UpdataeManagerLeave() {
       });
       return;
     }
-  
     if (!formData.leavecategory) {
       setError("Please select a leave category.");
       Swal.fire({
@@ -103,7 +96,6 @@ function UpdataeManagerLeave() {
       });
       return;
     }
-  
     if (!formData.leavetype) {
       setError("Please select a leave type.");
       Swal.fire({
@@ -112,7 +104,6 @@ function UpdataeManagerLeave() {
       });
       return;
     }
-  
     if (!formData.reason) {
       setError("Please provide a reason for the leave request.");
       Swal.fire({
@@ -121,20 +112,17 @@ function UpdataeManagerLeave() {
         text: "A reason is required for the leave request.",
       });
       return;
-    }
-  
+    } 
     const leaveData = {
       ...formData,
       user_id: userId,
-    };
-  
+    };  
     try {
       const response = await axios.post(`${baseURL}/update-managerleave/${id}`, leaveData, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
-      });
-  
+      }); 
       if (response.status === 200) {
         Swal.fire({
           position: "top-center",
@@ -153,107 +141,13 @@ function UpdataeManagerLeave() {
       console.error('Error:', error);
     }
   };
-  
-
-
-// const handleSelectDate = async (start, end) => {
-//   const today = moment().startOf("day");
-//   let startDate = moment(start);
-//   const endDate = moment(end);
-//   let leaveType = "Full Day";
-//   let containsWeekend = false;
-
-
-//   for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {
-//       if (date.day() === 6 || date.day() === 0) { 
-//           containsWeekend = true;
-//           break;
-//       }
-//   }
-
- 
-//   if (startDate.isBefore(today) || endDate.isBefore(today)) {
-//       // alert("You cannot select previous dates");
-//       Swal.fire({
-//         position: "top-center",
-//         icon: "warning",
-//         title: "You cannot select previous dates",
-//         showConfirmButton: false,
-//         timer: 1500
-//       });
-//       setError("Cannot select previous dates.");
-//       return;
-//   }
-
-//   const authToken = localStorage.getItem("token");
-//   let isFridayLeaveApproved = false;
-
-//   try {
-//       const response = await axios.get(`${baseURL}/get-sandwichleave`, {
-//           headers: {
-//               Authorization: `Bearer ${authToken}`,
-//           },
-//       });
-
-//       const existingLeaves = response.data.leaves;
-//       console.log("Existing Leaves:", existingLeaves);
-
-//       if (startDate.day() === 1) { 
-//           const prevFriday = startDate.clone().subtract(3, "days");
-//           console.log("Previous Friday:", prevFriday.format("MMMM D, YYYY"));
-
-//           const fridayLeave = existingLeaves.find(
-//               (leave) =>
-//                   moment(leave.todate).isSame(prevFriday, "day") &&
-//                   leave.status === "Approved" &&
-//                   leave.leavetype === "Full Day"
-//           );
-
-//           if (fridayLeave) {
-//               isFridayLeaveApproved = true;
-//           }
-//       }
-//   } catch (error) {
-//       console.error("Error fetching user leaves:", error);
-//   }
-
-//   let numOfDays = endDate.diff(startDate, "days") + 1;
-
-
-//   if (containsWeekend) {
-//       leaveType = "Full Day";
-//       setDisableOptions(true); 
-//   }
-
-
-//   if (isFridayLeaveApproved) {
-//       numOfDays += 2; 
-//   }
-
-  
-//   setFormData((prevFormData) => ({
-//       ...prevFormData,
-//       daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
-//           "MMMM D, YYYY"
-//       )}`,
-//       fromdate: startDate.format("MMMM D, YYYY"),
-//       todate: endDate.format("MMMM D, YYYY"),
-//       noofdays: numOfDays,
-//       leavetype: leaveType,
-//       issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
-//       isFridayLeaveApproved,
-//   }));
-
-//   setShowForm(true);
-// };
-
+    
 const handleSelectDate = async (start, end) => {
   const today = moment().startOf("day");
   let startDate = moment(start);
   const endDate = moment(end);
   let leaveType = "Full Day";
   let containsWeekend = false;
-
   for (
     let date = startDate.clone();
     date.isSameOrBefore(endDate);
@@ -264,7 +158,6 @@ const handleSelectDate = async (start, end) => {
       break;
     }
   }
-
   if (startDate.isBefore(today) || endDate.isBefore(today)) {
     Swal.fire({
       position: "top-center",
@@ -276,10 +169,8 @@ const handleSelectDate = async (start, end) => {
     setError("Cannot select previous dates.");
     return;
   }
-
   const authToken = localStorage.getItem("token");
   let isFridayLeaveApproved = false;
-
   try {
     const response = await axios.get(`${baseURL}/get-sandwichleave`, {
       headers: {
@@ -298,7 +189,6 @@ const handleSelectDate = async (start, end) => {
           leave.status === "Approved" &&
           leave.leavetype === "Full Day"
       );
-
       if (fridayLeave) {
         isFridayLeaveApproved = true;
       }
@@ -344,8 +234,7 @@ const handleSelectDate = async (start, end) => {
         setError("Leave request cancelled due to sandwich leave.");
       }
     });
-  } else {
-   
+  } else {  
     setFormData((prevFormData) => ({
       ...prevFormData,
       daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
@@ -362,10 +251,8 @@ const handleSelectDate = async (start, end) => {
   }
 };
 
-
 const handleChange = (e) => {
   const { name, value } = e.target;
-  
   if (name === "leavetype" || name === "fromdate" || name === "todate") {
       const startDate = moment(formData.fromdate, "MMMM D, YYYY");
       const endDate = moment(formData.todate, "MMMM D, YYYY");
@@ -381,9 +268,7 @@ const handleChange = (e) => {
                   leaveType = "Full Day"; 
                   setDisableOptions(true); 
                   break;
-              }
-          }
-      }
+              }}}
 
       if (name === "leavetype" && leaveType === "Full Day") {
           for (let date = startDate.clone(); date.isSameOrBefore(endDate); date.add(1, "days")) {

@@ -1,10 +1,8 @@
-
 import { House, Users } from "lucide-react";
 import React, { useState } from "react";
 
 const Sidebar = () => {
   const [teammateOpen, setTeammateOpen] = useState(false);
-
   const handleTeammateToggle = () => {
     setTeammateOpen(!teammateOpen);
   };

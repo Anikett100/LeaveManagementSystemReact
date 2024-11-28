@@ -1,5 +1,4 @@
 import React from "react";
-
 function HolidayModal({ show, onClose, children }) {
   if (!show) return null;
 

@@ -1,7 +1,6 @@
 import React from "react";
 function ManagerModal({ show, onClose, children }) {
   if (!show) return null;
-
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
       onClose();

@@ -61,8 +61,6 @@ export function TableDemo() {
     if (!confirmed.isConfirmed) {
       return;
     }
-  
-  
     Swal.fire({
       title: 'Deleting leave...',
       icon: 'info',
@@ -158,7 +156,6 @@ export function TableDemo() {
     return false;
   };
   
-
   const handleOpenCalendar = (field) => {
     setDateField(field);
   };
@@ -207,7 +204,6 @@ export function TableDemo() {
     setShowCalendar(false);
   };
   
-
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -284,10 +280,11 @@ export function TableDemo() {
 
   return (
     <div className="container-fluid  mb-14">
+        <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md" >
       <Table className="mt-5">
         <TableHeader>
           <TableRow>
-            <TableHead className="font-medium text-black">Sr No</TableHead>
+            <TableHead className="font-medium text-black">Sr   No</TableHead>
             <TableHead className="font-medium text-black">Leave Type</TableHead>
             <TableHead className="font-medium text-black">Leave Category</TableHead>
             <TableHead className="font-medium text-black">From Date</TableHead>
@@ -305,7 +302,7 @@ export function TableDemo() {
             className={`
               ${leave.status === "Approved" ? "text-green-800" : 
                leave.status === "Cancelled" ? "text-red-600" : 
-               leave.status === "Pending" ? "text-yellow-500" : 
+               leave.status === "Pending" ? "text-yellow-400" : 
                "text-gray-500"}
             `}
             >
@@ -355,6 +352,7 @@ export function TableDemo() {
           ))}
         </TableBody>
       </Table>
+      </div>
         {/* Pagination  */}
         <div className="flex justify-between items-center mt-4">
         <button

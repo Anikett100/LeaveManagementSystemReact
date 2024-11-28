@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { BookmarkX, CircleX, FilePenLine } from "lucide-react";
 import axios from "axios";
@@ -52,7 +51,6 @@ export function TableDemo() {
     if (!confirmed.isConfirmed) {
       return;
     }
-
     Swal.fire({
       title: "Deleting leave...",
       icon: "info",
@@ -63,8 +61,7 @@ export function TableDemo() {
     try {
       await axios.delete(`${baseURL}/delete-leave/${id}`);
       setLeaves(leaves.filter((leave) => leave.id !== id));
-
-      Swal.fire({
+        Swal.fire({
         title: "Deleted!",
         text: "Leave deleted successfully!",
         icon: "success",
@@ -118,7 +115,6 @@ export function TableDemo() {
       alert("Failed to send cancellation request.");
     }
   };
-
   const cancelRequest = async (leaveId, reason) => {
     try {
       await axios.post(
@@ -143,6 +139,7 @@ export function TableDemo() {
 
   return (
     <div className="container-fluid mb-14">
+      
       <Table className="mt-5 ">
         <TableHeader>
           <TableRow className="" >
@@ -168,7 +165,7 @@ export function TableDemo() {
                   : leave.status === "Cancelled"
                   ? "text-red-600"
                   : leave.status === "Pending"
-                  ? "text-yellow-600"
+                  ? "text-yellow-400"
                   : "text-gray-500"
               }`}
             >

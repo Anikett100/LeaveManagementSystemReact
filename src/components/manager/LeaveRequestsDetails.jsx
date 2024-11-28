@@ -3,7 +3,6 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; 
 import Header from './Header';
-
 import Footer from '../user/Footer';
 import Sidebar from './Sidebar';
 const baseURL = process.env.REACT_APP_API_BASE_URL;
@@ -90,8 +89,7 @@ function LeaveRequestsDetails() {
                 </div>
               </div>
             </div>
-          </div>
-      
+          </div>     
         </div>
       </div>
       <Footer />

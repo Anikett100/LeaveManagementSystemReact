@@ -155,13 +155,11 @@ const handleSelectDate = async (start, end) => {
   }
 };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (value.trim() !== "") {
       setError((prevErrors) => ({ ...prevErrors, [name]: "" }));
-    }
-    
+    } 
     if (name === "leavetype" || name === "fromdate" || name === "todate") {
         const startDate = moment(formData.fromdate, "MMMM D, YYYY");
         const endDate = moment(formData.todate, "MMMM D, YYYY");
@@ -188,13 +186,11 @@ const handleSelectDate = async (start, end) => {
                     break;
                 }
             }
-
             if (startDate.day() === 1 && formData.isFridayLeaveApproved) {
                 isSandwich = true;
                 numOfDays += 2; 
             }
         }
-
         setFormData((prevFormData) => ({
             ...prevFormData,
             leavetype: leaveType,
@@ -217,7 +213,6 @@ const handleSelectDate = async (start, end) => {
     }));
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const authToken = localStorage.getItem("token");
@@ -227,18 +222,14 @@ const handleSelectDate = async (start, end) => {
     if (!formData.leavecategory) formErrors.leavecategory = "* Leave Category is required";
     if (!formData.leavetype) formErrors.leavetype = "* Leave Type is required";
     if (!formData.reason) formErrors.reason = "* Reason is required";
-  
     setError(formErrors);
-    if (Object.keys(formErrors).length === 0) {
-       
-  
+    if (Object.keys(formErrors).length === 0) {    
     const leaveData = {
       ...formData,
       user_id: userId,
       fromdate: formData.fromdate,
       todate: formData.todate,
-    };
-  
+    }; 
     const previousFormData = { ...formData };
     setFormData({
       ...formData,
@@ -277,10 +268,7 @@ const handleSelectDate = async (start, end) => {
       setFormData(previousFormData);
     }
   }
-}
-  
-
-
+}  
   const options = [
     { label: "sankalp@ycstech.in", value: "sankalp@ycstech.in" },   
   ];

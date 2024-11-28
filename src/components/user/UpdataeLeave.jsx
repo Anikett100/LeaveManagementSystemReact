@@ -82,45 +82,11 @@ function UpdateLeave() {
       cc: selectedOptions.map((option) => option.value),
     }));
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const userId = localStorage.getItem("user_id");
-  //   const authToken = localStorage.getItem("token");
-  //   const leaveData = {
-  //     ...formData,
-  //     user_id: userId,
-  //   };
-
-  //   try {
-  //     await axios.post(`${baseURL}/update-leave/${id}`, leaveData, {
-  //       headers: {
-  //         Authorization: `Bearer ${authToken}`,
-  //       },
-  //     });
-     
-  //     Swal.fire({
-  //       position: "top-center",
-  //       icon: "success",
-  //       title: "Leave request updated successfully",
-  //       showConfirmButton: false,
-  //       timer: 1500,
-  //     });
-  //     handleCloseModal();
-  //     navigate("/user");
-  //   } catch (error) {
-  //     setError("Error updating leave request");
-  //     console.error("Error:", error);
-  //   }
-  // };
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const userId = localStorage.getItem("user_id");
     const authToken = localStorage.getItem("token");
   
-    // Validation
     if (!formData.daterange) {
       setError("Please select a valid date range.");
       Swal.fire({
@@ -130,8 +96,7 @@ function UpdateLeave() {
       });
       return;
     }
-  
-    if (!formData.leavecategory) {
+      if (!formData.leavecategory) {
       setError("Please select a leave category.");
       Swal.fire({
         icon: "error",
@@ -139,7 +104,6 @@ function UpdateLeave() {
       });
       return;
     }
-  
     if (!formData.leavetype) {
       setError("Please select a leave type.");
       Swal.fire({
@@ -148,7 +112,6 @@ function UpdateLeave() {
       });
       return;
     }
-  
     if (selected.length === 0) {
       setError("Please select at least one recipient (CC).");
       Swal.fire({
@@ -157,7 +120,6 @@ function UpdateLeave() {
       });
       return;
     }
-  
     if (!formData.reason) {
       setError("Please provide a reason for the leave request.");
       Swal.fire({
@@ -179,7 +141,6 @@ function UpdateLeave() {
           Authorization: `Bearer ${authToken}`,
         },
       });
-  
       if (response.status === 200) {
         Swal.fire({
           position: "top-center",
@@ -199,16 +160,12 @@ function UpdateLeave() {
     }
   };
   
-
-  
-
   const handleSelectDate = async (start, end) => {
     const today = moment().startOf("day");
     let startDate = moment(start);
     const endDate = moment(end);
     let leaveType = "Full Day";
     let containsWeekend = false;
-  
     for (
       let date = startDate.clone();
       date.isSameOrBefore(endDate);
@@ -219,7 +176,6 @@ function UpdateLeave() {
         break;
       }
     }
-  
     if (startDate.isBefore(today) || endDate.isBefore(today)) {
       Swal.fire({
         position: "top-center",
@@ -295,12 +251,10 @@ function UpdateLeave() {
   
           setShowForm(true);
         } else {
-          // Reset or handle the case where user cancels the action
           setError("Leave request cancelled due to sandwich leave.");
         }
       });
     } else {
-      // Normal leave submission without sandwich condition
       setFormData((prevFormData) => ({
         ...prevFormData,
         daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
@@ -312,15 +266,12 @@ function UpdateLeave() {
         leavetype: leaveType,
         issandwich: "No",
       }));
-  
       setShowForm(true);
     }
   };
-  
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name === "leavetype" || name === "fromdate" || name === "todate") {
       const startDate = moment(formData.fromdate, "MMMM D, YYYY");
       const endDate = moment(formData.todate, "MMMM D, YYYY");

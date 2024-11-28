@@ -9,7 +9,6 @@ export default function LoginForm() {
     email: '',
     password: '',
   });
-
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(''); 
   const [success, setSuccess] = useState(false); 
@@ -27,7 +26,6 @@ export default function LoginForm() {
     e.preventDefault();
     try {
        const response = await axios.post(`${baseURL}/login`, formData);
-      // const response = await axios.post('https://yspace.ycstech.net/login', formData);
       const { access_token,role,user_id } = response.data;
       localStorage.setItem('token', access_token);
       localStorage.setItem('role', role);
@@ -53,31 +51,31 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-300">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
+    <div className="flex items-center justify-center min-h-screen bg-[#111827]">
+      <form onSubmit={handleSubmit} className="bg-[#1f2937] p-8 rounded-lg shadow-lg w-full max-w-md">
+        {/* <h2 className="text-2xl font-bold mb-4 text-center text-white">Login</h2> */}
         {error && <div className="bg-red-200 text-red-700 p-2 rounded mb-4">{error}</div>}
         {success && <div className="bg-green-200 text-green-700 p-2 rounded mb-4">Login successful!</div>}
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Email</label>
+          <label className="block text-white font-medium mb-2">Email</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="mt-1 p-3 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
         <div className="mb-6">
-          <label className="block text-gray-700 font-medium mb-2">Password</label>
+          <label className="block text-white font-medium mb-2">Password</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="mt-1 p-3 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
             <div
@@ -89,7 +87,7 @@ export default function LoginForm() {
           </div>
         </div>
         <div className="flex justify-center items-center">
-          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition-colors duration-300 ease-in-out w-full max-w-xs">
+          <button type="submit" className="bg-white text-black py-2 px-0 rounded-full  transition-colors duration-300 ease-in-out w-full max-w-xs">
             Login
           </button>
         </div>

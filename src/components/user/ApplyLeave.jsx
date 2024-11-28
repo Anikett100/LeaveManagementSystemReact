@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Header from "./Header";
 import FullScreenCalendar from "../Calender";
@@ -27,10 +26,9 @@ const ApplyLeave = () => {
     issandwich: "",
     noofdays: "",
   });
-
   const navigate = useNavigate();
-  
-  const handleCloseModal = () => {
+
+   const handleCloseModal = () => {
     setShowForm(false);
     setFormData({
       leavetype: "",
@@ -73,8 +71,7 @@ const ApplyLeave = () => {
       setError("Cannot select previous dates.");
       return;
     }
-  
-    const authToken = localStorage.getItem("token");
+   const authToken = localStorage.getItem("token");
     let isFridayLeaveApproved = false;
   
     try {
@@ -83,8 +80,7 @@ const ApplyLeave = () => {
           Authorization: `Bearer ${authToken}`,
         },
       });
-  
-      const existingLeaves = response.data.leaves;
+     const existingLeaves = response.data.leaves;
   
       if (startDate.day() === 1) {
         const prevFriday = startDate.clone().subtract(3, "days");
@@ -159,13 +155,11 @@ const ApplyLeave = () => {
     }
   };
   
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (value.trim() !== "") {
       setError((prevErrors) => ({ ...prevErrors, [name]: "" }));
     }
-
     if (name === "leavetype" || name === "fromdate" || name === "todate") {
       const startDate = moment(formData.fromdate, "MMMM D, YYYY");
       const endDate = moment(formData.todate, "MMMM D, YYYY");
@@ -228,56 +222,6 @@ const ApplyLeave = () => {
       cc: selectedOptions.map((option) => option.value),
     }));
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const userId = localStorage.getItem("user_id");
-  //   const authToken = localStorage.getItem("token");
-  //   const leaveData = {
-  //     ...formData,
-  //     user_id: userId,
-  //     fromdate: formData.fromdate,
-  //     todate: formData.todate,
-  //   };
-
-  //   const previousFormData = { ...formData };
-  //   setFormData({
-  //     ...formData,
-  //     leavetype: "",
-  //     leavecategory: "",
-  //     cc: [],
-  //     reason: "",
-  //     daterange: "",
-  //     noofdays: "",
-  //     issandwich: "",
-  //     user_id: "",
-  //   });
-  //   try {
-  //     const response = await axios.post(`${baseURL}/add-leave`, leaveData, {
-  //       headers: {
-  //         Authorization: `Bearer ${authToken}`,
-  //       },
-  //     });
-
-  //     if (response.status === 200) {
-  //       Swal.fire({
-  //         position: "top-center",
-  //         icon: "success",
-  //         title: "Leave request sent successfully",
-  //         showConfirmButton: false,
-  //         timer: 1600,
-  //       });
-  //       navigate("/user");
-  //     } else {
-  //       setError("Error submitting leave request");
-  //       setFormData(previousFormData);
-  //     }
-  //   } catch (error) {
-  //     setError("Error submitting leave request");
-  //     console.error("Error:", error);
-  //     setFormData(previousFormData);
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

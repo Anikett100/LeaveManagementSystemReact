@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -12,7 +11,6 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
-
 
 export function HolidayTable() {
   const ITEMS_PER_PAGE = 10;
@@ -67,8 +65,6 @@ export function HolidayTable() {
           ))}
         </TableBody>
       </Table>
-
-       {/* Pagination */}
        <div className="flex justify-between items-center mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}

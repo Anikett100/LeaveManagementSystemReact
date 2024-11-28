@@ -28,18 +28,51 @@ export default function Index() {
     fetchUser();
   }, []);
 
+  // return (
+  //   <>
+  //     <Header />
+  //     <div className="container">
+  //       <div className="flex justify-end mt-4 space-x-2">
+  //         <Link to='/apply-leave'>
+  //           <Button className="bg-[#324983] flex items-center">
+  //             <CirclePlus className="w-5 h-5 mr-2" />
+  //             Apply Leave
+  //           </Button>
+  //         </Link>
+  //         <Link to='/user-holidays'>
+  //           <Button className="bg-[#BC2127] flex items-center">
+  //             Holidays
+  //           </Button>
+  //         </Link>
+  //       </div>
+  //       <div className="mt-4">
+  //         {user && (
+  //           <div className="text-black text-xl">
+  //            <h1 className='text-2xl text-[#324983] font-bold ml-3 mt-2'>  Carry Forward Leaves: {user.paidleaves}</h1>
+  //           </div>
+  //         )}
+  //       </div>
+  //     </div>
+  //     <div className="container">
+  //       <TableDemo />
+  //     </div>
+  //     <Footer />
+  //   </>
+  // );
+
+
   return (
     <>
-      <Header />
+      <Header className="sticky top-0 z-50 bg-white shadow-md" />
       <div className="container">
-        <div className="flex justify-end mt-4 space-x-2">
-          <Link to='/apply-leave'>
+        <div className="flex justify-end mt-4 space-x-2 sticky top-[64px] z-40 bg-white py-2"> 
+          <Link to="/apply-leave">
             <Button className="bg-[#324983] flex items-center">
               <CirclePlus className="w-5 h-5 mr-2" />
               Apply Leave
             </Button>
           </Link>
-          <Link to='/user-holidays'>
+          <Link to="/user-holidays">
             <Button className="bg-[#BC2127] flex items-center">
               Holidays
             </Button>
@@ -48,15 +81,18 @@ export default function Index() {
         <div className="mt-4">
           {user && (
             <div className="text-black text-xl">
-             <h1 className='text-2xl text-[#324983] font-bold ml-3 mt-2'>  Carry Forward Leaves: {user.paidleaves}</h1>
+              <h1 className="text-2xl text-[#324983] font-bold ml-3 mt-2">
+                Carry Forward Leaves: {user.paidleaves}
+              </h1>
             </div>
           )}
         </div>
       </div>
-      <div className="container">
+      <div className="container overflow-auto h-[calc(100vh-200px)] mt-4">
         <TableDemo />
       </div>
       <Footer />
     </>
   );
+  
 }

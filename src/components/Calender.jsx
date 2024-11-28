@@ -117,7 +117,6 @@ const FullScreenCalendar = ({ onSelectDate }) => {
         break;
       }
     }
-
     if (isHolidaySelected) {
       Swal.fire({
         position: "top-center",
@@ -164,8 +163,6 @@ const FullScreenCalendar = ({ onSelectDate }) => {
         className: `${backgroundColor}`,
     };
 };
-
-
   return (
     <div className="p-4 rounded-lg w-full h-[80vh]">
       <Calendar
