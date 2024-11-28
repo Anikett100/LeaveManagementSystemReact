@@ -41,7 +41,8 @@ export function HolidayTable() {
 
   return (
     <div className="container-fluid mb-14 ">
-      <Table className="mt-2">
+      <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md">
+      <Table className="mt-2 ">
         <TableHeader>
           <TableRow>
             <TableHead className="text-black">Sr no</TableHead>
@@ -65,6 +66,7 @@ export function HolidayTable() {
           ))}
         </TableBody>
       </Table>
+      </div>
        <div className="flex justify-between items-center mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
