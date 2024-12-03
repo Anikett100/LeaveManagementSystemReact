@@ -46,10 +46,10 @@ export function HolidayTable() {
         <TableHeader>
           <TableRow>
             <TableHead className="text-black">Sr no</TableHead>
-            <TableHead className="text-black"> Date</TableHead>
-            <TableHead className="text-black"> Day</TableHead>
-            <TableHead className="text-black"> Name</TableHead>
-            <TableHead className="text-black"> Type</TableHead>
+            <TableHead className="text-black">Date</TableHead>
+            <TableHead className="text-black">Day</TableHead>
+            <TableHead className="text-black">Name</TableHead>
+            <TableHead className="text-black">Type</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -67,7 +67,7 @@ export function HolidayTable() {
         </TableBody>
       </Table>
       </div>
-       <div className="flex justify-between items-center mt-4">
+       {/* <div className="flex justify-between items-center mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -85,7 +85,7 @@ export function HolidayTable() {
         >
           Next
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

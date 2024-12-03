@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import HolidayModal from './HolidayModal';
@@ -9,6 +8,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from ".
 import { Trash2, FilePenLine } from "lucide-react";
 import moment from "moment";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
+
 export default function HolidayTable() {
   const [holidays, setHolidays] = useState([]);
   const [currentHoliday, setCurrentHoliday] = useState(null);

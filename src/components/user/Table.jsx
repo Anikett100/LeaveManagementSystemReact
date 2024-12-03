@@ -11,14 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/Table";
-
 const ITEMS_PER_PAGE = 10;
 const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 export function TableDemo() {
   const [leaves, setLeaves] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reason, setReason] = useState("");
   const [leaveToCancel, setLeaveToCancel] = useState(null);
@@ -89,10 +87,6 @@ export function TableDemo() {
     }
   };
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
   useEffect(() => {
     fetchLeaves();
   }, []);
@@ -130,6 +124,10 @@ export function TableDemo() {
       console.error('Error in cancellation request:', error);
     }
   };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
   const totalPages = Math.ceil(leaves.length / ITEMS_PER_PAGE);
 
   const currentItems = leaves.slice(
@@ -140,7 +138,7 @@ export function TableDemo() {
   return (
     <div className="container-fluid mb-14">
       <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md">
-      <Table className="mt-5 ">
+      <Table className="">
         <TableHeader>
           <TableRow className="" >
             <TableHead className="text-black">Sr No</TableHead>
@@ -223,8 +221,9 @@ export function TableDemo() {
           ))}
         </TableBody>
       </Table>
+      </div>
 
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center mt-4 mr-2 ml-2 mb-2">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -270,8 +269,7 @@ export function TableDemo() {
             </div>
           </div>
         </div>
-      )}
-    </div>
+      )}    
     </div>
   );
 }

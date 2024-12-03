@@ -32,6 +32,14 @@ export default function Index() {
     <>
       <Header />
       <div className="container">
+        <div className="flex justify-between">
+        <div className="mt-4">
+          {user && (
+            <div className="text-black text-xl">
+             <h1 className='text-2xl text-[#324983] font-bold ml-3 mt-2'>  Carry Forward Leaves: {user.paidleaves}</h1>
+            </div>
+          )}
+        </div>
         <div className="flex justify-end mt-4 space-x-2">
           <Link to='/apply-leave'>
             <Button className="bg-[#324983] flex items-center">
@@ -45,12 +53,7 @@ export default function Index() {
             </Button>
           </Link>
         </div>
-        <div className="mt-4">
-          {user && (
-            <div className="text-black text-xl">
-             <h1 className='text-2xl text-[#324983] font-bold ml-3 mt-2'>  Carry Forward Leaves: {user.paidleaves}</h1>
-            </div>
-          )}
+       
         </div>
       </div>
       <div className="container">

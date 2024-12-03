@@ -79,7 +79,7 @@ export function LeaveRequestTable() {
 
   return (
     <div className="container-fluid mb-14">
-      <div className="mb-2 flex justify-between">
+      <div className=" flex justify-between">
         <h1 className="text-3xl text-[#324983] font-bold ml-3 mt-2 mb-1">
           Leave Requests
         </h1>
@@ -88,12 +88,12 @@ export function LeaveRequestTable() {
           placeholder="Search by name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border-2 border-[#324983]  rounded-lg px-3 py-2 focus:outline-none focus:border-blue-700"
+          className="border-2 border-[#324983]  rounded-lg text-center h-10 w-40 focus:outline-none focus:border-blue-700"
         />
       </div>
       <hr />
        <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md" >
-      <Table className="mt-5">
+      <Table className="mt-2">
         <TableHeader>
           <TableRow>
             <TableHead className="font-medium text-black">Sr No</TableHead>

@@ -63,227 +63,138 @@ export function LeaveRequestTable() {
   };
   const totalPages = Math.ceil(leaves.length / ITEMS_PER_PAGE);
 
-  const filteredLeaves = leaves.filter((leave) =>
-    leave.user?.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredLeaves = leaves.filter((leave) => {
+    const userName = leave.user?.name?.toLowerCase() || ""; 
+    const roleName = leave.role?.toLowerCase() || ""; 
+    
+    return (
+      userName.includes(searchQuery.toLowerCase()) || 
+      roleName.includes(searchQuery.toLowerCase())    
+    );
+  });
   const currentItems = filteredLeaves.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
 
   return (
-    // <div className="container-fluid mb-10">
-
-    //   <div className="mb-2 flex justify-between">
-    //   <h1 className="text-3xl text-[#324983] font-bold ml-3 mt-2 mb-1">
-    //             Leave Requests
-    //           </h1>
-    //     <input
-    //       type="text"
-    //       placeholder="Search by name..."
-    //       value={searchQuery}
-    //       onChange={(e) => setSearchQuery(e.target.value)}
-    //       className="border-2 border-[#324983]  rounded-lg px-3 py-2 focus:outline-none focus:border-blue-700"
-    //     />    
-    //   </div>
-    //   <hr/>
-
-    //   <Table className="mt-5">
-    //     <TableHeader>
-    //       <TableRow>
-    //         <TableHead className="font-medium text-black">Sr No</TableHead>
-    //         <TableHead className="font-medium text-black">Name</TableHead>
-    //         <TableHead className="font-medium text-black">Leave Type</TableHead>
-    //         <TableHead className="font-medium text-black">Leave Category</TableHead>
-    //         <TableHead className="font-medium text-black">Sandwich Leave</TableHead>
-    //         <TableHead className="font-medium text-black">From Date</TableHead>
-    //         <TableHead className="font-medium text-black">To Date</TableHead>
-    //         <TableHead className="font-medium text-black">No Of Days</TableHead>
-    //         <TableHead className="font-medium text-black">Status</TableHead>
-    //         <TableHead className="font-medium text-black">Details</TableHead>
-    //       </TableRow>
-    //     </TableHeader>
-    //     <TableBody>
-    //       {currentItems.map((leave, index) => (
-    //         <TableRow key={leave.id}
-    //           className={`${
-    //             leave.status === "Approved" ? "text-green-800" : 
-    //             leave.status === "Cancelled" ? "text-red-600" : 
-    //             leave.status === "Pending" ? "text-yellow-400" : 
-    //             "text-gray-500"
-    //           }`}
-    //         >
-    //           <TableCell className="font-medium">{index + 1}</TableCell>
-    //           <TableCell>{leave.user?.name || 'N/A'}</TableCell>
-    //           <TableCell>{leave.leavetype}</TableCell>
-    //           <TableCell>{leave.leavecategory}</TableCell>
-    //           <TableCell>{leave.issandwich}</TableCell>
-    //           <TableCell>{leave.fromdate}</TableCell>
-    //           <TableCell>{leave.todate}</TableCell>
-    //           <TableCell>{leave.noofdays}</TableCell>
-    //           <TableCell>
-    //             <select
-    //               className={`border rounded px-3 py-2 ${getStatusClass(leave.status)}`}
-    //               value={leave.status}
-    //               onChange={(e) => handleStatusChange(e.target.value, leave.id)}
-    //             >
-    //               <option value={leave.status}>{leave.status}</option>
-    //               {leave.status !== "Approved" && <option value="Approved">Approved</option>}
-    //               {leave.status !== "Cancelled" && <option value="Cancelled">Cancelled</option>}
-    //             </select>
-    //           </TableCell>
-    //           <TableCell>
-    //             <Link to={`/admin-leavedetails/${leave.id}`}>view</Link>
-    //           </TableCell>
-    //         </TableRow>
-    //       ))}
-    //     </TableBody>
-    //   </Table>
-
-    //   <AdminModal show={showReason} onClose={() => setShowReason(false)}>
-    //     <div>
-    //       <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="actionreason">
-    //         Reason
-    //       </label>
-    //       <textarea
-    //         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-    //         id="actionreason"
-    //         name="actionreason"
-    //         value={actionReason}
-    //         onChange={(e) => setActionReason(e.target.value)}
-    //       />
-    //       <div className="flex justify-end mt-4">
-    //         <button
-    //           onClick={() => setShowReason(false)}
-    //           className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:bg-red-700"
-    //         >
-    //           Cancel
-    //         </button>
-    //         <button
-    //           onClick={handleSubmitReason}
-    //           className="ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-700"
-    //         >
-    //           Submit
-    //         </button>
-    //       </div>
-    //     </div>
-    //   </AdminModal>
-
-    //   <div className="flex justify-between items-center mt-4">
-    //     <button
-    //       onClick={() => handlePageChange(currentPage - 1)}
-    //       disabled={currentPage === 1}
-    //       className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-    //     >
-    //       Previous
-    //     </button>
-    //     <span>
-    //       Page {currentPage} of {totalPages}
-    //     </span>
-    //     <button
-    //       onClick={() => handlePageChange(currentPage + 1)}
-    //       disabled={currentPage === totalPages}
-    //       className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-    //     >
-    //       Next
-    //     </button>
-    //   </div>
-    // </div>
-
     <div className="container-fluid mb-10">
-  <div className="mb-2 flex justify-between">
-    <h1 className="text-3xl text-[#324983] font-bold ml-3 mt-2 mb-1">
-      Leave Requests
-    </h1>
-    <input
-      type="text"
-      placeholder="Search by name..."
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      className="border-2 border-[#324983] rounded-lg px-2 py-0.5 text-sm  focus:outline-none focus:border-[#324983]"
-    />
-  </div>
-  <hr />
 
-  <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md">
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="font-medium text-black">Sr No</TableHead>
-          <TableHead className="font-medium text-black">Name</TableHead>
-          <TableHead className="font-medium text-black">Leave Type</TableHead>
-          <TableHead className="font-medium text-black">Leave Category</TableHead>
-          <TableHead className="font-medium text-black">Sandwich Leave</TableHead>
-          <TableHead className="font-medium text-black">From Date</TableHead>
-          <TableHead className="font-medium text-black">To Date</TableHead>
-          <TableHead className="font-medium text-black">No Of Days</TableHead>
-          <TableHead className="font-medium text-black">Status</TableHead>
-          <TableHead className="font-medium text-black">Details</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {currentItems.map((leave, index) => (
-          <TableRow
-            key={leave.id}
-            className={`${
-              leave.status === "Approved"
-                ? "text-green-800"
-                : leave.status === "Cancelled"
-                ? "text-red-600"
-                : leave.status === "Pending"
-                ? "text-yellow-400"
-                : "text-gray-500"
-            }`}
-          >
-            <TableCell className="font-medium">{index + 1}</TableCell>
-            <TableCell>{leave.user?.name || "N/A"}</TableCell>
-            <TableCell>{leave.leavetype}</TableCell>
-            <TableCell>{leave.leavecategory}</TableCell>
-            <TableCell>{leave.issandwich}</TableCell>
-            <TableCell>{leave.fromdate}</TableCell>
-            <TableCell>{leave.todate}</TableCell>
-            <TableCell>{leave.noofdays}</TableCell>
-            <TableCell>
-              <select
-                className={`border rounded px-3 py-2 ${getStatusClass(leave.status)}`}
-                value={leave.status}
-                onChange={(e) => handleStatusChange(e.target.value, leave.id)}
-              >
-                <option value={leave.status}>{leave.status}</option>
-                {leave.status !== "Approved" && <option value="Approved">Approved</option>}
-                {leave.status !== "Cancelled" && <option value="Cancelled">Cancelled</option>}
-              </select>
-            </TableCell>
-            <TableCell>
-              <Link to={`/admin-leavedetails/${leave.id}`}>view</Link>
-            </TableCell>
+      <div className=" flex justify-between">
+      <h1 className="text-3xl text-[#324983] font-bold ml-3 mt-2 mb-1">
+                Leave Requests
+              </h1>
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border-2 border-[#324983] rounded-lg text-center h-10 w-40 focus:outline-none focus:border-blue-700"
+        />    
+      </div>
+      <hr/>
+      <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md">
+      <Table className="mt-2">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="font-medium text-black">Sr No</TableHead>
+            <TableHead className="font-medium text-black">Name</TableHead>
+            <TableHead className="font-medium text-black">Leave Type</TableHead>
+            <TableHead className="font-medium text-black">Leave Category</TableHead>
+            <TableHead className="font-medium text-black">Sandwich Leave</TableHead>
+            <TableHead className="font-medium text-black">From Date</TableHead>
+            <TableHead className="font-medium text-black">To Date</TableHead>
+            <TableHead className="font-medium text-black">No Of Days</TableHead>
+            <TableHead className="font-medium text-black">Status</TableHead>
+            <TableHead className="font-medium text-black">Details</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  </div>
+        </TableHeader>
+        <TableBody>
+          {currentItems.map((leave, index) => (
+            <TableRow key={leave.id}
+              className={`${
+                leave.status === "Approved" ? "text-green-800" : 
+                leave.status === "Cancelled" ? "text-red-600" : 
+                leave.status === "Pending" ? "text-yellow-400" : 
+                "text-gray-500"
+              }`}
+            >
+              <TableCell className="font-medium">{index + 1}</TableCell>
+              <TableCell>{leave.user?.name || 'N/A'}</TableCell>
+              <TableCell>{leave.leavetype}</TableCell>
+              <TableCell>{leave.leavecategory}</TableCell>
+              <TableCell>{leave.issandwich}</TableCell>
+              <TableCell>{leave.fromdate}</TableCell>
+              <TableCell>{leave.todate}</TableCell>
+              <TableCell>{leave.noofdays}</TableCell>
+              <TableCell>
+                <select
+                  className={`border rounded px-3 py-2 ${getStatusClass(leave.status)}`}
+                  value={leave.status}
+                  onChange={(e) => handleStatusChange(e.target.value, leave.id)}
+                >
+                  <option value={leave.status}>{leave.status}</option>
+                  {leave.status !== "Approved" && <option value="Approved">Approved</option>}
+                  {leave.status !== "Cancelled" && <option value="Cancelled">Cancelled</option>}
+                </select>
+              </TableCell>
+              <TableCell>
+                <Link to={`/admin-leavedetails/${leave.id}`}>view</Link>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      </div>
+      <AdminModal show={showReason} onClose={() => setShowReason(false)}>
+        <div>
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="actionreason">
+            Reason
+          </label>
+          <textarea
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="actionreason"
+            name="actionreason"
+            value={actionReason}
+            onChange={(e) => setActionReason(e.target.value)}
+          />
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={() => setShowReason(false)}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:bg-red-700"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmitReason}
+              className="ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:bg-green-700"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </AdminModal>
 
-  {/* Pagination Controls */}
-  <div className="flex justify-between items-center mt-4">
-    <button
-      onClick={() => handlePageChange(currentPage - 1)}
-      disabled={currentPage === 1}
-      className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-    >
-      Previous
-    </button>
-    <span>
-      Page {currentPage} of {totalPages}
-    </span>
-    <button
-      onClick={() => handlePageChange(currentPage + 1)}
-      disabled={currentPage === totalPages}
-      className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
-    >
-      Next
-    </button>
-  </div>
-</div>
+      <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+        >
+          Next
+        </button>
+      </div>
+    </div>
 
   );
 }
