@@ -35,10 +35,10 @@ function UpdataeManagerLeave() {
         const response = await axios.get(`${baseURL}/get-updateleave/${id}`);
         const leaveData = response.data;
   
-        const daterange = moment(leaveData.fromdate).format('MMMM D, YYYY') + 
+        const daterange = moment(leaveData.fromdate).format('YYYY-MM-DD') + 
                           (leaveData.fromdate === leaveData.todate 
                             ? '' 
-                            : ` to ${moment(leaveData.todate).format('MMMM D, YYYY')}`);
+                            : ` to ${moment(leaveData.todate).format('YYYY-MM-DD')}`);
    
   
         setFormData({
@@ -46,8 +46,8 @@ function UpdataeManagerLeave() {
           leavecategory: leaveData.leavecategory,
           reason: leaveData.reason,
            daterange: daterange,
-          fromdate: moment(leaveData.fromdate).format('MMMM D, YYYY'),
-          todate: moment(leaveData.todate).format('MMMM D, YYYY'),
+          fromdate: moment(leaveData.fromdate).format('YYYY-MM-DD'),
+          todate: moment(leaveData.todate).format('YYYY-MM-DD'),
           issandwich: leaveData.issandwich,
           user_id: leaveData.user_id,
           noofdays: leaveData.noofdays,
@@ -217,11 +217,11 @@ const handleSelectDate = async (start, end) => {
 
         setFormData((prevFormData) => ({
           ...prevFormData,
-          daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
-            "MMMM D, YYYY"
+          daterange: `${startDate.format("YYYY-MM-DD")} to ${endDate.format(
+            "YYYY-MM-DD"
           )}`,
-          fromdate: startDate.format("MMMM D, YYYY"),
-          todate: endDate.format("MMMM D, YYYY"),
+          fromdate: startDate.format("YYYY-MM-DD"),
+          todate: endDate.format("YYYY-MM-DD"),
           noofdays: numOfDays,
           leavetype: leaveType,
           issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
@@ -237,11 +237,11 @@ const handleSelectDate = async (start, end) => {
   } else {  
     setFormData((prevFormData) => ({
       ...prevFormData,
-      daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
-        "MMMM D, YYYY"
+      daterange: `${startDate.format("YYYY-MM-DD")} to ${endDate.format(
+        "YYYY-MM-DD"
       )}`,
-      fromdate: startDate.format("MMMM D, YYYY"),
-      todate: endDate.format("MMMM D, YYYY"),
+      fromdate: startDate.format("YYYY-MM-DD"),
+      todate: endDate.format("YYYY-MM-DD"),
       noofdays: numOfDays,
       leavetype: leaveType,
       issandwich: "No",
@@ -254,8 +254,8 @@ const handleSelectDate = async (start, end) => {
 const handleChange = (e) => {
   const { name, value } = e.target;
   if (name === "leavetype" || name === "fromdate" || name === "todate") {
-      const startDate = moment(formData.fromdate, "MMMM D, YYYY");
-      const endDate = moment(formData.todate, "MMMM D, YYYY");
+      const startDate = moment(formData.fromdate, "YYYY-MM-DD");
+      const endDate = moment(formData.todate, "YYYY-MM-DD");
   
       let isSandwich = false;
       let numOfDays = endDate.diff(startDate, "days") + 1;

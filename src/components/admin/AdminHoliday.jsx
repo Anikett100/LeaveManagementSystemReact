@@ -64,17 +64,19 @@ function AdminHoliday() {
   return (
     <>
       <div className="flex h-screen">
-        <div className="fixed top-0 left-0 h-full w-64 ">
+        <div className="fixed top-0 left-0 h-full w-64">
           <Sidebar />
         </div>
         <div className="flex flex-col flex-1 ml-64 overflow-auto">
           <Header />
+          <div className="container">
           <div className="flex items-center justify-between mt-4 px-4">
             <h1 className="text-3xl font-bold text-[#324983]">Holidays and Events</h1>
             <Button className="bg-[#324983] flex items-center" onClick={handleAddHolidayClick}>
               <CirclePlus className="w-5 h-5 mr-2" />
               Add holidays
             </Button>
+          </div>
           </div>
 
           <HolidayModal show={showForm} onClose={handleCloseModal}>

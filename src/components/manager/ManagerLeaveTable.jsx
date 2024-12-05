@@ -14,7 +14,8 @@ import {
 } from "../ui/Table";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-const ITEMS_PER_PAGE = 10; 
+import moment from "moment";
+const ITEMS_PER_PAGE = 10;
 
 export function TableDemo() {
   const [leaves, setLeaves] = useState([]);
@@ -48,53 +49,53 @@ export function TableDemo() {
 
   const deleteLeave = async (id) => {
     const confirmed = await Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "Do you really want to delete this leave?",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, keep it'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, keep it",
     });
-  
+
     if (!confirmed.isConfirmed) {
       return;
     }
     Swal.fire({
-      title: 'Deleting leave...',
-      icon: 'info',
+      title: "Deleting leave...",
+      icon: "info",
       showConfirmButton: false,
-      timer: 1500
+      timer: 1500,
     });
-  
+
     try {
       await axios.delete(`${baseURL}/delete-managerleave/${id}`);
       setLeaves(leaves.filter((leave) => leave.id !== id));
-  
+
       Swal.fire({
-        title: 'Deleted!',
-        text: 'Leave deleted successfully!',
-        icon: 'success',
+        title: "Deleted!",
+        text: "Leave deleted successfully!",
+        icon: "success",
         showConfirmButton: false,
-        timer: 1500
+        timer: 1500,
       });
     } catch (error) {
       if (error.response && error.response.status === 403) {
         Swal.fire({
-          title: 'Warning!',
-          text: 'You cannot delete this leave as it has been approved by the admin.',
-          icon: 'warning',
+          title: "Warning!",
+          text: "You cannot delete this leave as it has been approved by the admin.",
+          icon: "warning",
           showConfirmButton: false,
-          timer: 1500
+          timer: 1500,
         });
       } else {
         console.error("Error deleting leave:", error);
         Swal.fire({
-          title: 'Error!',
-          text: 'An error occurred while trying to delete the leave.',
-          icon: 'error',
-          confirmButtonText: 'Ok'
+          title: "Error!",
+          text: "An error occurred while trying to delete the leave.",
+          icon: "error",
+          confirmButtonText: "Ok",
         });
       }
     }
@@ -103,11 +104,11 @@ export function TableDemo() {
   const handleEditClick = (leave) => {
     setCurrentLeave(leave);
     setFormData({
-      ...leave, 
-      fromdate: leave.fromdate, 
-      todate: leave.todate, 
+      ...leave,
+      fromdate: leave.fromdate,
+      todate: leave.todate,
     });
-    setShowForm(true);  
+    setShowForm(true);
   };
 
   const handleChange = (e) => {
@@ -117,45 +118,60 @@ export function TableDemo() {
         ...prevFormData,
         [name]: value,
       };
-  
-      if ((name === "fromdate" || name === "todate") && updatedFormData.fromdate && updatedFormData.todate) {
-        if (new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
+
+      if (
+        (name === "fromdate" || name === "todate") &&
+        updatedFormData.fromdate &&
+        updatedFormData.todate
+      ) {
+        if (
+          new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)
+        ) {
           Swal.fire({
             position: "top-center",
             icon: "warning",
             title: "The 'To Date' cannot be earlier than the 'From Date'.",
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
           });
           updatedFormData.todate = "";
           updatedFormData.noofdays = "";
         } else {
-          const noofdays = calculateNoOfDays(updatedFormData.fromdate, updatedFormData.todate);
+          const noofdays = calculateNoOfDays(
+            updatedFormData.fromdate,
+            updatedFormData.todate
+          );
           updatedFormData.noofdays = noofdays;
-          
-          if (isWeekendPeriod(updatedFormData.fromdate, updatedFormData.todate)) {
+
+          if (
+            isWeekendPeriod(updatedFormData.fromdate, updatedFormData.todate)
+          ) {
             updatedFormData.leavecategory = "Sandwich Leave";
           }
         }
       }
-  
+
       return updatedFormData;
     });
   };
-  
+
   const isWeekendPeriod = (fromdate, todate) => {
     const startDate = new Date(fromdate);
     const endDate = new Date(todate);
 
-    for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
-      const dayOfWeek = date.getDay(); 
+    for (
+      let date = startDate;
+      date <= endDate;
+      date.setDate(date.getDate() + 1)
+    ) {
+      const dayOfWeek = date.getDay();
       if (dayOfWeek === 6 || dayOfWeek === 0) {
         return true;
       }
     }
     return false;
   };
-  
+
   const handleOpenCalendar = (field) => {
     setDateField(field);
   };
@@ -167,43 +183,54 @@ export function TableDemo() {
         ...prevFormData,
         [dateField]: formattedDate,
       };
-  
+
       if (updatedFormData.fromdate && updatedFormData.todate) {
-        if (dateField === "todate" && new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
+        if (
+          dateField === "todate" &&
+          new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)
+        ) {
           Swal.fire({
             position: "top-center",
             icon: "warning",
             title: "The 'To Date' cannot be earlier than the 'From Date'.",
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
           });
           updatedFormData.todate = "";
           updatedFormData.noofdays = "";
-        } else if (dateField === "fromdate" && new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)) {
+        } else if (
+          dateField === "fromdate" &&
+          new Date(updatedFormData.todate) < new Date(updatedFormData.fromdate)
+        ) {
           Swal.fire({
             position: "top-center",
             icon: "warning",
             title: "The 'To Date' cannot be earlier than the 'From Date'.",
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
           });
           updatedFormData.todate = "";
           updatedFormData.noofdays = "";
         } else {
-          const noofdays = calculateNoOfDays(updatedFormData.fromdate, updatedFormData.todate);
+          const noofdays = calculateNoOfDays(
+            updatedFormData.fromdate,
+            updatedFormData.todate
+          );
           updatedFormData.noofdays = noofdays;
-  
-          if (isWeekendPeriod(updatedFormData.fromdate, updatedFormData.todate)) {
+
+          if (
+            isWeekendPeriod(updatedFormData.fromdate, updatedFormData.todate)
+          ) {
             updatedFormData.leavecategory = "Sandwich Leave";
           }
         }
       }
-  
+
       return updatedFormData;
     });
     setShowCalendar(false);
   };
-  
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -229,7 +256,7 @@ export function TableDemo() {
     const from = new Date(fromdate);
     const to = new Date(todate);
     const diffTime = Math.abs(to - from);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; 
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
     return diffDays;
   };
 
@@ -239,7 +266,8 @@ export function TableDemo() {
   };
 
   const submitCancellationRequest = async () => {
-    if (reason.trim() === "") return alert("Please enter a reason for cancellation.");
+    if (reason.trim() === "")
+      return alert("Please enter a reason for cancellation.");
 
     try {
       await cancelRequest(leaveToCancel, reason);
@@ -255,8 +283,8 @@ export function TableDemo() {
   const cancelRequest = async (leaveId, reason) => {
     try {
       await axios.post(
-        `${baseURL}/cancel-leave/${leaveId}`, 
-        { reason }, 
+        `${baseURL}/cancel-leave/${leaveId}`,
+        { reason },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -264,7 +292,7 @@ export function TableDemo() {
         }
       );
     } catch (error) {
-      console.error('Error in cancellation request:', error);
+      console.error("Error in cancellation request:", error);
     }
   };
 
@@ -280,81 +308,108 @@ export function TableDemo() {
 
   return (
     <div className="container-fluid  mb-14">
-        <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md" >
-      <Table className="mt-5">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="font-medium text-black">Sr   No</TableHead>
-            <TableHead className="font-medium text-black">Leave Type</TableHead>
-            <TableHead className="font-medium text-black">Leave Category</TableHead>
-            <TableHead className="font-medium text-black">From Date</TableHead>
-            <TableHead className="font-medium text-black">To Date</TableHead>
-            <TableHead className="font-medium text-black">No Of Days</TableHead>
-            <TableHead className="font-medium text-black">Reason</TableHead>
-            <TableHead className="font-medium text-black">Status</TableHead>
-            <TableHead className="font-medium text-black">View</TableHead>
-            <TableHead className="font-medium text-black">Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {leaves.map((leave, index) => (
-            <TableRow key={index}
-            className={`
-              ${leave.status === "Approved" ? "text-green-800" : 
-               leave.status === "Cancelled" ? "text-red-600" : 
-               leave.status === "Pending" ? "text-yellow-400" : 
-               "text-gray-500"}
-            `}
-            >
-              <TableCell className="font-medium">{leave.id}</TableCell>
-              <TableCell>{leave.leavetype}</TableCell>
-              <TableCell>{leave.leavecategory}</TableCell>
-              <TableCell className="">{leave.fromdate}</TableCell>
-              <TableCell className="">{leave.todate}</TableCell>
-              <TableCell className="">{leave.noofdays}</TableCell>
-              <TableCell className="">{leave.reason}</TableCell>
-              <TableCell className="">{leave.status}</TableCell>
-              <TableCell>
-                <Link to={`/manager-leavedetails/${leave.id}`}>view</Link>
-              </TableCell>
-              <TableCell className="">
-                <div className="flex justify-around">
-                  <button
-                     className={`rounded text-red-600 transition ${leave.status === "Approved" ? "opacity-50 cursor-not-allowed" : ""}`}
-                     onClick={() => deleteLeave(leave.id)}
-                     disabled={leave.status === "Approved"}
-                  >
-                    <CircleX />
-                  </button>
-                  <Link to={`/update-managerleave/${leave.id}`}>
-                  <button
-                  className={`rounded text-blue-600 mt-1 transition ${leave.status === "Approved" ? "opacity-50 cursor-not-allowed" : ""}`}
-                  disabled={leave.status === "Approved"}
-                  >
-                    <FilePenLine />
-                  </button>
-                  </Link>
-
-                  <button
-                    className={`rounded text-blue-600 transition ${
-                      leave.status !== "Approved"
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
-                    }`}
-                    onClick={() => handleCancelClick(leave.id)}
-                    disabled={leave.status !== "Approved"}
-                  >
-                    <BookmarkX />
-                  </button>
-                </div>
-              </TableCell>
+      <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md">
+        <Table className="mt-5">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-medium text-black">Sr No</TableHead>
+              <TableHead className="font-medium text-black">
+                Leave Type
+              </TableHead>
+              <TableHead className="font-medium text-black">
+                Leave Category
+              </TableHead>
+              <TableHead className="font-medium text-black">
+                From Date
+              </TableHead>
+              <TableHead className="font-medium text-black">To Date</TableHead>
+              <TableHead className="font-medium text-black">
+                No Of Days
+              </TableHead>
+              <TableHead className="font-medium text-black">Reason</TableHead>
+              <TableHead className="font-medium text-black">Status</TableHead>
+              <TableHead className="font-medium text-black">View</TableHead>
+              <TableHead className="font-medium text-black">Action</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {leaves.map((leave, index) => (
+              <TableRow
+                key={index}
+                className={`
+              ${
+                leave.status === "Approved"
+                  ? "text-green-800"
+                  : leave.status === "Cancelled"
+                  ? "text-red-600"
+                  : leave.status === "Pending"
+                  ? "text-yellow-400"
+                  : "text-gray-500"
+              }
+            `}
+              >
+                <TableCell className="font-medium">{leave.id}</TableCell>
+                <TableCell>{leave.leavetype}</TableCell>
+                <TableCell>{leave.leavecategory}</TableCell>
+                <TableCell>
+                  {moment(leave.fromdate).format("MMMM D, YYYY")}
+                </TableCell>
+                <TableCell>
+                  {moment(leave.todate).format("MMMM D, YYYY")}
+                </TableCell>
+
+                <TableCell className="">{leave.noofdays}</TableCell>
+                <TableCell className="">{leave.reason}</TableCell>
+                <TableCell className="">{leave.status}</TableCell>
+                <TableCell>
+                  <Link to={`/manager-leavedetails/${leave.id}`}>view</Link>
+                </TableCell>
+                <TableCell className="">
+                  <div className="flex justify-around">
+                    <button
+                      className={`rounded text-red-600 transition ${
+                        leave.status === "Approved"
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                      onClick={() => deleteLeave(leave.id)}
+                      disabled={leave.status === "Approved"}
+                    >
+                      <CircleX />
+                    </button>
+                    <Link to={`/update-managerleave/${leave.id}`}>
+                      <button
+                        className={`rounded text-blue-600 mt-1 transition ${
+                          leave.status === "Approved"
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        disabled={leave.status === "Approved"}
+                      >
+                        <FilePenLine />
+                      </button>
+                    </Link>
+
+                    <button
+                      className={`rounded text-blue-600 transition ${
+                        leave.status !== "Approved"
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                      onClick={() => handleCancelClick(leave.id)}
+                      disabled={leave.status !== "Approved"}
+                    >
+                      <BookmarkX />
+                    </button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
-        {/* Pagination  */}
-        <div className="flex justify-between items-center mt-4">
+      {/* Pagination  */}
+      <div className="flex justify-between items-center mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -376,9 +431,15 @@ export function TableDemo() {
 
       {showForm && (
         <Modal show={showForm} onClose={() => setShowForm(false)}>
-          <form className="bg-white p-4 rounded shadow-md" onSubmit={handleUpdate}>
+          <form
+            className="bg-white p-4 rounded shadow-md"
+            onSubmit={handleUpdate}
+          >
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="leavecategory">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="leavecategory"
+              >
                 Leave Category
               </label>
               <select
@@ -387,14 +448,19 @@ export function TableDemo() {
                 name="leavecategory"
                 value={formData.leavecategory}
                 onChange={handleChange}
-              > 
+              >
                 <option value="Casual Leave">Casual Leave</option>
                 <option value="Sick Leave">Sick Leave</option>
-                <option className="hidden" value="Sandwich Leave">Sandwich Leave</option>
+                <option className="hidden" value="Sandwich Leave">
+                  Sandwich Leave
+                </option>
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="leavetype">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="leavetype"
+              >
                 Leave Type
               </label>
               <select
@@ -411,7 +477,10 @@ export function TableDemo() {
               </select>
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fromdate">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="fromdate"
+              >
                 From Date
               </label>
               <div className="relative">
@@ -433,7 +502,10 @@ export function TableDemo() {
               </div>
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="todate">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="todate"
+              >
                 To Date
               </label>
               <div className="relative">
@@ -455,7 +527,10 @@ export function TableDemo() {
               </div>
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="noofdays">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="noofdays"
+              >
                 No of Days
               </label>
               <input
@@ -468,7 +543,10 @@ export function TableDemo() {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="reason">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="reason"
+              >
                 Reason
               </label>
               <textarea
@@ -482,7 +560,8 @@ export function TableDemo() {
             <div className="flex items-center justify-between">
               <Button
                 className="bg-[#484C7F] text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="submit">
+                type="submit"
+              >
                 Update
               </Button>
             </div>
@@ -490,10 +569,12 @@ export function TableDemo() {
         </Modal>
       )}
 
-{showReasonInput && (
+      {showReasonInput && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-1/3">
-            <h3 className="text-xl text-center text-[#484C7F] mb-4">Leave Cancellation Reason</h3>
+            <h3 className="text-xl text-center text-[#484C7F] mb-4">
+              Leave Cancellation Reason
+            </h3>
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
@@ -520,6 +601,3 @@ export function TableDemo() {
     </div>
   );
 }
-
-
-

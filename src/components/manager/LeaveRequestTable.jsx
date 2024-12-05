@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import ManagerModal from "./ReasonModal";
 import { Link } from "react-router-dom";
+import moment from "moment";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
 const ITEMS_PER_PAGE = 10;
 
@@ -92,31 +93,37 @@ export function LeaveRequestTable() {
         />
       </div>
       <hr />
-       <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md" >
-      <Table className="mt-2">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="font-medium text-black">Sr No</TableHead>
-            <TableHead className="font-medium text-black">Name</TableHead>
-            <TableHead className="font-medium text-black">Leave type</TableHead>
-            <TableHead className="font-medium text-black">
-              Leave category
-            </TableHead>
-            <TableHead className="font-medium text-black">
-              Sandwich Leave
-            </TableHead>
-            <TableHead className="font-medium text-black">From date</TableHead>
-            <TableHead className="font-medium text-black">To date</TableHead>
-            <TableHead className="font-medium text-black">No of Days</TableHead>
-            <TableHead className="font-medium text-black">Status</TableHead>
-            <TableHead className="font-medium text-black">Details</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {currentItems.map((leave, index) => (
-            <TableRow
-              key={leave.id}
-              className={`
+      <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md">
+        <Table className="mt-2">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-medium text-black">Sr No</TableHead>
+              <TableHead className="font-medium text-black">Name</TableHead>
+              <TableHead className="font-medium text-black">
+                Leave type
+              </TableHead>
+              <TableHead className="font-medium text-black">
+                Leave category
+              </TableHead>
+              <TableHead className="font-medium text-black">
+                Sandwich Leave
+              </TableHead>
+              <TableHead className="font-medium text-black">
+                From date
+              </TableHead>
+              <TableHead className="font-medium text-black">To date</TableHead>
+              <TableHead className="font-medium text-black">
+                No of Days
+              </TableHead>
+              <TableHead className="font-medium text-black">Status</TableHead>
+              <TableHead className="font-medium text-black">Details</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentItems.map((leave, index) => (
+              <TableRow
+                key={leave.id}
+                className={`
               ${
                 leave.status === "Approved"
                   ? "text-green-800"
@@ -127,39 +134,46 @@ export function LeaveRequestTable() {
                   : "text-gray-500"
               }
             `}
-            >
-              <TableCell className="font-medium">{index + 1}</TableCell>
-              <TableCell>{leave.user?.name || "N/A"}</TableCell>
-              <TableCell>{leave.leavetype}</TableCell>
-              <TableCell>{leave.leavecategory}</TableCell>
-              <TableCell>{leave.issandwich}</TableCell>
-              <TableCell>{leave.fromdate}</TableCell>
-              <TableCell>{leave.todate}</TableCell>
-              <TableCell>{leave.noofdays}</TableCell>
-              <TableCell>
-                <select
-                  className={`border rounded px-3 py-2 ${getStatusClass(
-                    leave.status
-                  )}`}
-                  value={leave.status}
-                  onChange={(e) => handleStatusChange(e.target.value, leave.id)}
-                >
-                  <option value={leave.status}>{leave.status}</option>
-                  {leave.status !== "Approved" && (
-                    <option value="Approved">Approved</option>
-                  )}
-                  {leave.status !== "Cancelled" && (
-                    <option value="Cancelled">Cancelled</option>
-                  )}
-                </select>
-              </TableCell>
-              <TableCell>
-                <Link to={`/leaverequests-details/${leave.id}`}>view</Link>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+              >
+                <TableCell className="font-medium">{index + 1}</TableCell>
+                <TableCell>{leave.user?.name || "N/A"}</TableCell>
+                <TableCell>{leave.leavetype}</TableCell>
+                <TableCell>{leave.leavecategory}</TableCell>
+                <TableCell>{leave.issandwich}</TableCell>
+                <TableCell>
+                  {moment(leave.fromdate).format("MMMM D, YYYY")}
+                </TableCell>
+                <TableCell>
+                  {moment(leave.todate).format("MMMM D, YYYY")}
+                </TableCell>
+
+                <TableCell>{leave.noofdays}</TableCell>
+                <TableCell>
+                  <select
+                    className={`border rounded px-3 py-2 ${getStatusClass(
+                      leave.status
+                    )}`}
+                    value={leave.status}
+                    onChange={(e) =>
+                      handleStatusChange(e.target.value, leave.id)
+                    }
+                  >
+                    <option value={leave.status}>{leave.status}</option>
+                    {leave.status !== "Approved" && (
+                      <option value="Approved">Approved</option>
+                    )}
+                    {leave.status !== "Cancelled" && (
+                      <option value="Cancelled">Cancelled</option>
+                    )}
+                  </select>
+                </TableCell>
+                <TableCell>
+                  <Link to={`/leaverequests-details/${leave.id}`}>view</Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
       <ManagerModal show={showReason} onClose={() => setShowReason(false)}>
         <div>

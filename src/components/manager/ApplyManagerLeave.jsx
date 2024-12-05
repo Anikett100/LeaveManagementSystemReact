@@ -120,11 +120,11 @@ const handleSelectDate = async (start, end) => {
 
         setFormData((prevFormData) => ({
           ...prevFormData,
-          daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
-            "MMMM D, YYYY"
+          daterange: `${startDate.format("YYYY-MM-DD")} to ${endDate.format(
+            "YYYY-MM-DD"
           )}`,
-          fromdate: startDate.format("MMMM D, YYYY"),
-          todate: endDate.format("MMMM D, YYYY"),
+          fromdate: startDate.format("YYYY-MM-DD"),
+          todate: endDate.format("YYYY-MM-DD"),
           noofdays: numOfDays,
           leavetype: leaveType,
           issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
@@ -141,11 +141,11 @@ const handleSelectDate = async (start, end) => {
    
     setFormData((prevFormData) => ({
       ...prevFormData,
-      daterange: `${startDate.format("MMMM D, YYYY")} to ${endDate.format(
-        "MMMM D, YYYY"
+      daterange: `${startDate.format("YYYY-MM-DD")} to ${endDate.format(
+        "YYYY-MM-DD"
       )}`,
-      fromdate: startDate.format("MMMM D, YYYY"),
-      todate: endDate.format("MMMM D, YYYY"),
+      fromdate: startDate.format("YYYY-MM-DD"),
+      todate: endDate.format("YYYY-MM-DD"),
       noofdays: numOfDays,
       leavetype: leaveType,
       issandwich: "No",
@@ -161,8 +161,8 @@ const handleSelectDate = async (start, end) => {
       setError((prevErrors) => ({ ...prevErrors, [name]: "" }));
     } 
     if (name === "leavetype" || name === "fromdate" || name === "todate") {
-        const startDate = moment(formData.fromdate, "MMMM D, YYYY");
-        const endDate = moment(formData.todate, "MMMM D, YYYY");
+        const startDate = moment(formData.fromdate, "YYYY-MM-DD");
+        const endDate = moment(formData.todate, "YYYY-MM-DD");
     
         let isSandwich = false;
         let numOfDays = endDate.diff(startDate, "days") + 1;

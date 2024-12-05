@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/Table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/Table";
 import axios from "axios";
 import AdminModal from "./ReasonModal";
 import { Link } from "react-router-dom";
+import moment from "moment";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
 const ITEMS_PER_PAGE = 10;
 
@@ -12,7 +20,7 @@ export function LeaveRequestTable() {
   const [currentAction, setCurrentAction] = useState({ status: "", id: null });
   const [actionReason, setActionReason] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchLeaves = async () => {
     try {
@@ -35,7 +43,7 @@ export function LeaveRequestTable() {
         status: currentAction.status,
         actionreason: actionReason,
       });
-      fetchLeaves(); 
+      fetchLeaves();
     } catch (error) {
       console.error(`Error updating leave status:`, error);
     }
@@ -64,12 +72,12 @@ export function LeaveRequestTable() {
   const totalPages = Math.ceil(leaves.length / ITEMS_PER_PAGE);
 
   const filteredLeaves = leaves.filter((leave) => {
-    const userName = leave.user?.name?.toLowerCase() || ""; 
-    const roleName = leave.role?.toLowerCase() || ""; 
-    
+    const userName = leave.user?.name?.toLowerCase() || "";
+    const roleName = leave.role?.toLowerCase() || "";
+
     return (
-      userName.includes(searchQuery.toLowerCase()) || 
-      roleName.includes(searchQuery.toLowerCase())    
+      userName.includes(searchQuery.toLowerCase()) ||
+      roleName.includes(searchQuery.toLowerCase())
     );
   });
   const currentItems = filteredLeaves.slice(
@@ -79,76 +87,105 @@ export function LeaveRequestTable() {
 
   return (
     <div className="container-fluid mb-10">
-
       <div className=" flex justify-between">
-      <h1 className="text-3xl text-[#324983] font-bold ml-3 mt-2 mb-1">
-                Leave Requests
-              </h1>
+        <h1 className="text-3xl text-[#324983] font-bold ml-3 mt-2 mb-1">
+          Leave Requests
+        </h1>
         <input
           type="text"
           placeholder="Search by name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="border-2 border-[#324983] rounded-lg text-center h-10 w-40 focus:outline-none focus:border-blue-700"
-        />    
+        />
       </div>
-      <hr/>
+      <hr />
       <div className="relative mt-5 max-h-[400px] overflow-y-auto border border-gray-300 rounded-md">
-      <Table className="mt-2">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="font-medium text-black">Sr No</TableHead>
-            <TableHead className="font-medium text-black">Name</TableHead>
-            <TableHead className="font-medium text-black">Leave Type</TableHead>
-            <TableHead className="font-medium text-black">Leave Category</TableHead>
-            <TableHead className="font-medium text-black">Sandwich Leave</TableHead>
-            <TableHead className="font-medium text-black">From Date</TableHead>
-            <TableHead className="font-medium text-black">To Date</TableHead>
-            <TableHead className="font-medium text-black">No Of Days</TableHead>
-            <TableHead className="font-medium text-black">Status</TableHead>
-            <TableHead className="font-medium text-black">Details</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {currentItems.map((leave, index) => (
-            <TableRow key={leave.id}
-              className={`${
-                leave.status === "Approved" ? "text-green-800" : 
-                leave.status === "Cancelled" ? "text-red-600" : 
-                leave.status === "Pending" ? "text-yellow-400" : 
-                "text-gray-500"
-              }`}
-            >
-              <TableCell className="font-medium">{index + 1}</TableCell>
-              <TableCell>{leave.user?.name || 'N/A'}</TableCell>
-              <TableCell>{leave.leavetype}</TableCell>
-              <TableCell>{leave.leavecategory}</TableCell>
-              <TableCell>{leave.issandwich}</TableCell>
-              <TableCell>{leave.fromdate}</TableCell>
-              <TableCell>{leave.todate}</TableCell>
-              <TableCell>{leave.noofdays}</TableCell>
-              <TableCell>
-                <select
-                  className={`border rounded px-3 py-2 ${getStatusClass(leave.status)}`}
-                  value={leave.status}
-                  onChange={(e) => handleStatusChange(e.target.value, leave.id)}
-                >
-                  <option value={leave.status}>{leave.status}</option>
-                  {leave.status !== "Approved" && <option value="Approved">Approved</option>}
-                  {leave.status !== "Cancelled" && <option value="Cancelled">Cancelled</option>}
-                </select>
-              </TableCell>
-              <TableCell>
-                <Link to={`/admin-leavedetails/${leave.id}`}>view</Link>
-              </TableCell>
+        <Table className="mt-2">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-medium text-black">Sr No</TableHead>
+              <TableHead className="font-medium text-black">Name</TableHead>
+              <TableHead className="font-medium text-black">
+                Leave Type
+              </TableHead>
+              <TableHead className="font-medium text-black">
+                Leave Category
+              </TableHead>
+              <TableHead className="font-medium text-black">
+                Sandwich Leave
+              </TableHead>
+              <TableHead className="font-medium text-black">
+                From Date
+              </TableHead>
+              <TableHead className="font-medium text-black">To Date</TableHead>
+              <TableHead className="font-medium text-black">
+                No Of Days
+              </TableHead>
+              <TableHead className="font-medium text-black">Status</TableHead>
+              <TableHead className="font-medium text-black">Details</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {currentItems.map((leave, index) => (
+              <TableRow
+                key={leave.id}
+                className={`${
+                  leave.status === "Approved"
+                    ? "text-green-800"
+                    : leave.status === "Cancelled"
+                    ? "text-red-600"
+                    : leave.status === "Pending"
+                    ? "text-yellow-400"
+                    : "text-gray-500"
+                }`}
+              >
+                <TableCell className="font-medium">{index + 1}</TableCell>
+                <TableCell>{leave.user?.name || "N/A"}</TableCell>
+                <TableCell>{leave.leavetype}</TableCell>
+                <TableCell>{leave.leavecategory}</TableCell>
+                <TableCell>{leave.issandwich}</TableCell>
+                <TableCell>
+                  {moment(leave.fromdate).format("MMMM D, YYYY")}
+                </TableCell>
+                <TableCell>
+                  {moment(leave.todate).format("MMMM D, YYYY")}
+                </TableCell>
+
+                <TableCell>{leave.noofdays}</TableCell>
+                <TableCell>
+                  <select
+                    className={`border rounded px-3 py-2 ${getStatusClass(
+                      leave.status
+                    )}`}
+                    value={leave.status}
+                    onChange={(e) =>
+                      handleStatusChange(e.target.value, leave.id)
+                    }
+                  >
+                    <option value={leave.status}>{leave.status}</option>
+                    {leave.status !== "Approved" && (
+                      <option value="Approved">Approved</option>
+                    )}
+                    {leave.status !== "Cancelled" && (
+                      <option value="Cancelled">Cancelled</option>
+                    )}
+                  </select>
+                </TableCell>
+                <TableCell>
+                  <Link to={`/admin-leavedetails/${leave.id}`}>view</Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
       <AdminModal show={showReason} onClose={() => setShowReason(false)}>
         <div>
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="actionreason">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="actionreason"
+          >
             Reason
           </label>
           <textarea
@@ -195,10 +232,5 @@ export function LeaveRequestTable() {
         </button>
       </div>
     </div>
-
   );
 }
-
-
-
-
