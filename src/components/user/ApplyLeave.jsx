@@ -15,7 +15,6 @@ const ApplyLeave = () => {
   const [error, setError] = useState("");
   const [selected, setSelected] = useState([]);
   const [disableOptions, setDisableOptions] = useState(false);
-
   const [formData, setFormData] = useState({
     leavetype: "",
     leavecategory: "",
@@ -28,7 +27,7 @@ const ApplyLeave = () => {
   });
   const navigate = useNavigate();
 
-   const handleCloseModal = () => {
+  const handleCloseModal = () => {
     setShowForm(false);
     setFormData({
       leavetype: "",
@@ -48,7 +47,7 @@ const ApplyLeave = () => {
     const endDate = moment(end);
     let leaveType = "Full Day";
     let containsWeekend = false;
-  
+
     for (
       let date = startDate.clone();
       date.isSameOrBefore(endDate);
@@ -59,39 +58,39 @@ const ApplyLeave = () => {
         break;
       }
     }
-  
-    // if (startDate.isBefore(today) || endDate.isBefore(today)) {
-    //   Swal.fire({
-    //     position: "top-center",
-    //     icon: "warning",
-    //     title: "You cannot select previous dates",
-    //     showConfirmButton: false,
-    //     timer: 1600,
-    //   });
-    //   setError("Cannot select previous dates.");
-    //   return;
-    // }
-   const authToken = localStorage.getItem("token");
+
+    if (startDate.isBefore(today) || endDate.isBefore(today)) {
+      Swal.fire({
+        position: "top-center",
+        icon: "warning",
+        title: "You cannot select previous dates",
+        showConfirmButton: false,
+        timer: 1600,
+      });
+      setError("Cannot select previous dates.");
+      return;
+    }
+    const authToken = localStorage.getItem("token");
     let isFridayLeaveApproved = false;
-  
+
     try {
       const response = await axios.get(`${baseURL}/get-leaves`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
-     const existingLeaves = response.data.leaves;
-  
+      const existingLeaves = response.data.leaves;
+
       if (startDate.day() === 1) {
         const prevFriday = startDate.clone().subtract(3, "days");
-  
+
         const fridayLeave = existingLeaves.find(
           (leave) =>
             moment(leave.todate).isSame(prevFriday, "day") &&
             leave.status === "Approved" &&
             leave.leavetype === "Full Day"
         );
-  
+
         if (fridayLeave) {
           isFridayLeaveApproved = true;
         }
@@ -99,7 +98,7 @@ const ApplyLeave = () => {
     } catch (error) {
       console.error("Error fetching user leaves:", error);
     }
-  
+
     let numOfDays = endDate.diff(startDate, "days") + 1;
     if (containsWeekend || isFridayLeaveApproved) {
       Swal.fire({
@@ -113,14 +112,16 @@ const ApplyLeave = () => {
         if (result.isConfirmed) {
           leaveType = "Full Day";
           setDisableOptions(true);
-  
+
           if (isFridayLeaveApproved) {
             numOfDays += 2;
           }
-  
+
           setFormData((prevFormData) => ({
             ...prevFormData,
-            daterange: `${startDate.format("YYYY-MM-DD")} to ${endDate.format("YYYY-MM-DD")}`,
+            daterange: `${startDate.format("YYYY-MM-DD")} to ${endDate.format(
+              "YYYY-MM-DD"
+            )}`,
             fromdate: startDate.format("YYYY-MM-DD"),
             todate: endDate.format("YYYY-MM-DD"),
             noofdays: numOfDays,
@@ -128,29 +129,29 @@ const ApplyLeave = () => {
             issandwich: containsWeekend || isFridayLeaveApproved ? "Yes" : "No",
             isFridayLeaveApproved,
           }));
-  
+
           setShowForm(true);
         } else {
-          
           setError("Leave request cancelled due to sandwich leave.");
         }
       });
     } else {
-     
       setFormData((prevFormData) => ({
         ...prevFormData,
-        daterange: `${startDate.format("YYYY-MM-DD")} to ${endDate.format("YYYY-MM-DD")}`,
+        daterange: `${startDate.format("YYYY-MM-DD")} to ${endDate.format(
+          "YYYY-MM-DD"
+        )}`,
         fromdate: startDate.format("YYYY-MM-DD"),
         todate: endDate.format("YYYY-MM-DD"),
         noofdays: numOfDays,
         leavetype: leaveType,
         issandwich: "No",
       }));
-  
+
       setShowForm(true);
     }
   };
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (value.trim() !== "") {
@@ -226,61 +227,62 @@ const ApplyLeave = () => {
     let formErrors = {};
 
     if (!formData.daterange) formErrors.daterange = "* Date Range is required";
-    if (!formData.leavecategory) formErrors.leavecategory = "* Leave Category is required";
+    if (!formData.leavecategory)
+      formErrors.leavecategory = "* Leave Category is required";
     if (!formData.leavetype) formErrors.leavetype = "* Leave Type is required";
-    if (formData.cc.length === 0) formErrors.cc = "* At least one recipient is required";
+    if (formData.cc.length === 0)
+      formErrors.cc = "* At least one recipient is required";
     if (!formData.reason) formErrors.reason = "* Reason is required";
-  
+
     setError(formErrors);
     if (Object.keys(formErrors).length === 0) {
-     
-    const leaveData = {
-      ...formData,
-      user_id: userId,
-      fromdate: formData.fromdate,
-      todate: formData.todate,
-    };
-  
-    const previousFormData = { ...formData };
-    setFormData({
-      ...formData,
-      leavetype: "",
-      leavecategory: "",
-      cc: [],
-      reason: "",
-      daterange: "",
-      noofdays: "",
-      issandwich: "",
-      user_id: "",
-    });
-  
-    try {
-      const response = await axios.post(`${baseURL}/add-leave`, leaveData, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+      const leaveData = {
+        ...formData,
+        user_id: userId,
+        fromdate: formData.fromdate,
+        todate: formData.todate,
+      };
+
+      const previousFormData = { ...formData };
+      setFormData({
+        ...formData,
+        leavetype: "",
+        leavecategory: "",
+        cc: [],
+        reason: "",
+        daterange: "",
+        noofdays: "",
+        issandwich: "",
+        user_id: "",
       });
-  
-      if (response.status === 200) {
-        Swal.fire({
-          position: "top-center",
-          icon: "success",
-          title: "Leave request sent successfully",
-          showConfirmButton: false,
-          timer: 1600,
+
+      try {
+        const response = await axios.post(`${baseURL}/add-leave`, leaveData, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
         });
-        navigate("/user");
-      } else {
+
+        if (response.status === 200) {
+          Swal.fire({
+            position: "top-center",
+            icon: "success",
+            title: "Leave request sent successfully",
+            showConfirmButton: false,
+            timer: 1600,
+          });
+          navigate("/user");
+        } else {
+          setError("Error submitting leave request");
+          setFormData(previousFormData);
+        }
+      } catch (error) {
         setError("Error submitting leave request");
+        console.error("Error:", error);
         setFormData(previousFormData);
       }
-    } catch (error) {
-      setError("Error submitting leave request");
-      console.error("Error:", error);
-      setFormData(previousFormData);
     }
-  }
-}
+  };
 
   const options = [
     { label: "sankalp@ycstech.in", value: "sankalp@ycstech.in" },
@@ -303,12 +305,11 @@ const ApplyLeave = () => {
             >
               <CircleX />
             </button>
-            <h2 className="text-xl font-bold mb-4">Apply Leave</h2>
+            <h2 className="text-xl text-center font-bold mb-4">Apply Leave</h2>
 
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <input
-               
                   type="text"
                   name="daterange"
                   value={formData.daterange}
@@ -325,14 +326,15 @@ const ApplyLeave = () => {
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
                   <option value="" disabled>
-                    Select Leave category  
+                    Select Leave category
                   </option>
                   <option value="Sick Leave">Sick Leave</option>
                   <option value="Casual Leave">Casual Leave</option>
                   <option value="Personal Leave">Personal Leave</option>
                 </select>
-                {error.leavecategory && <span className="text-red-500">{error.leavecategory}</span>}
-     
+                {error.leavecategory && (
+                  <span className="text-red-500">{error.leavecategory}</span>
+                )}
               </div>
 
               <div className="mb-4">
@@ -357,8 +359,9 @@ const ApplyLeave = () => {
                     Short Leave
                   </option>
                 </select>
-                {error.leavetype && <span className="text-red-500">{error.leavetype}</span>}
-
+                {error.leavetype && (
+                  <span className="text-red-500">{error.leavetype}</span>
+                )}
               </div>
 
               <div className="mb-4">
@@ -376,7 +379,7 @@ const ApplyLeave = () => {
                     clearSearch: "Clear search",
                   }}
                 />
-               {error.cc && <span className="text-red-500">{error.cc}</span>}
+                {error.cc && <span className="text-red-500">{error.cc}</span>}
               </div>
 
               <div className="mb-4">
@@ -407,27 +410,27 @@ const ApplyLeave = () => {
               </div>
               <div className="mb-4">
                 <textarea
-                
                   name="reason"
                   value={formData.reason}
                   onChange={handleChange}
                   placeholder="Please add your reason"
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
-                {error.reason && <span className="text-red-500">{error.reason}</span>}
-
+                {error.reason && (
+                  <span className="text-red-500">{error.reason}</span>
+                )}
               </div>
               <div className="flex justify-end mt-4">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none"
+                  className="px-4 py-2 bg-[#BC2127] text-white rounded hover:bg-red-600 focus:outline-none"
                 >
                   Close
                 </button>
                 <button
                   type="submit"
-                  className="ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none"
+                  className="ml-2 px-4 py-2 bg-[#324983] text-white rounded  focus:outline-none"
                 >
                   Apply
                 </button>

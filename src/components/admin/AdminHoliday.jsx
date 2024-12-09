@@ -78,7 +78,6 @@ function AdminHoliday() {
             </Button>
           </div>
           </div>
-
           <HolidayModal show={showForm} onClose={handleCloseModal}>
             <form className="bg-white p-6 rounded-lg shadow-lg" onSubmit={handleSubmit}>
               <div className="mb-6">

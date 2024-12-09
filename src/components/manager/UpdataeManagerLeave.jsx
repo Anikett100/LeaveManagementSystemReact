@@ -79,40 +79,16 @@ function UpdataeManagerLeave() {
     e.preventDefault();
     const authToken = localStorage.getItem('token');
     const userId = localStorage.getItem('user_id');
-    if (!formData.daterange) {
-      setError("Please select a valid date range.");
-      Swal.fire({
-        icon: "error",
-        title: "Please select a valid date range.",
-        text: "A valid date range is required to update the leave request.",
-      });
-      return;
-    }
-    if (!formData.leavecategory) {
-      setError("Please select a leave category.");
-      Swal.fire({
-        icon: "error",
-        title: "Please select a leave category.",
-      });
-      return;
-    }
-    if (!formData.leavetype) {
-      setError("Please select a leave type.");
-      Swal.fire({
-        icon: "error",
-        title: "Please select a leave type.",
-      });
-      return;
-    }
-    if (!formData.reason) {
-      setError("Please provide a reason for the leave request.");
-      Swal.fire({
-        icon: "error",
-        title: "Please provide a reason.",
-        text: "A reason is required for the leave request.",
-      });
-      return;
-    } 
+    let formErrors = {};
+
+    if (!formData.daterange) formErrors.daterange = "* Date Range is required";
+    if (!formData.leavecategory) formErrors.leavecategory = "* Leave Category is required";
+    if (!formData.leavetype) formErrors.leavetype = "* Leave Type is required";
+    if (!formData.reason) formErrors.reason = "* Reason is required";
+  
+    setError(formErrors);
+    if (Object.keys(formErrors).length === 0) {
+   
     const leaveData = {
       ...formData,
       user_id: userId,
@@ -140,6 +116,7 @@ function UpdataeManagerLeave() {
       setError('Error updating leave request.');
       console.error('Error:', error);
     }
+  }
   };
     
 const handleSelectDate = async (start, end) => {
@@ -400,6 +377,7 @@ const handleChange = (e) => {
                   placeholder="Reason"
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
+                 {error.reason && <span className="text-red-500">{error.reason}</span>}
               </div>
               <div className="flex justify-end mt-4">
                 <button
