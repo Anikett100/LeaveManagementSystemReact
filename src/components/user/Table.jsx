@@ -21,6 +21,7 @@ export function TableDemo() {
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reason, setReason] = useState("");
   const [leaveToCancel, setLeaveToCancel] = useState(null);
+  const [reasonError, setReasonError] = useState(null);
 
   const fetchLeaves = async () => {
     try {
@@ -98,17 +99,35 @@ export function TableDemo() {
   };
 
   const submitCancellationRequest = async () => {
-    if (reason.trim() === "")
-      return alert("Please enter a reason for cancellation.");
+   
+    const reasonTrimmed = reason.trim();
 
+    if (reasonTrimmed === "") {
+      setReasonError("Please enter a reason for cancellation.");
+      return;
+    }
     try {
       await cancelRequest(leaveToCancel, reason);
-      alert("Cancellation request sent!");
+
+      Swal.fire({
+        position: "top-center",
+        icon: "success",
+        title: "Cancellation request sent!",
+        showConfirmButton: false,
+        timer: 1600,
+      });
       setShowReasonInput(false);
       setReason("");
     } catch (error) {
       console.error("Error sending cancellation request:", error);
-      alert("Failed to send cancellation request.");
+
+      Swal.fire({
+        position: "top-center",
+        icon: "error",
+        title: "Failed to send cancellation request.",
+        showConfirmButton: false,
+        timer: 1600,
+      });
     }
   };
   const cancelRequest = async (leaveId, reason) => {
@@ -179,7 +198,6 @@ export function TableDemo() {
                 <TableCell>
                   {moment(leave.todate).format("MMMM D, YYYY")}
                 </TableCell>
-
                 <TableCell>{leave.noofdays}</TableCell>
                 <TableCell>{leave.status}</TableCell>
                 <TableCell>
@@ -256,12 +274,25 @@ export function TableDemo() {
             <h3 className="text-xl text-center text-[#484C7F] mb-4">
               Leave Cancellation Reason
             </h3>
+
             <textarea
               value={reason}
-              onChange={(e) => setReason(e.target.value)}
+              onChange={(e) => {
+                const input = e.target.value;
+                setReason(input);
+                if (input.trim() !== "" && input.trim().length > 0) {
+                  setReasonError(null);
+                }
+              }}
               placeholder="Enter cancellation reason"
-              className="w-full p-2 border rounded"
+              className={`w-full p-2 border rounded ${
+                reasonError ? "border-red-600" : ""
+              }`}
             />
+
+            {reasonError && (
+              <p className="text-red-600 text-sm mt-2">{reasonError}</p>
+            )}
             <div className="flex justify-end mt-4 space-x-2">
               <button
                 onClick={submitCancellationRequest}

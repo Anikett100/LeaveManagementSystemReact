@@ -6,8 +6,8 @@ import { CircleX } from "lucide-react";
 import { MultiSelect } from "react-multi-select-component";
 import axios from "axios";
 import moment from "moment";
-import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 const baseURL = process.env.REACT_APP_API_BASE_URL;
 
 const ApplyLeave = () => {
@@ -49,7 +49,7 @@ const ApplyLeave = () => {
     let containsWeekend = false;
 
     for (
-      let date = startDate.clone();
+      let date = startDate.clone();   
       date.isSameOrBefore(endDate);
       date.add(1, "days")
     ) {
@@ -169,7 +169,7 @@ const ApplyLeave = () => {
         for (
           let date = startDate.clone();
           date.isSameOrBefore(endDate);
-          date.add(1, "days")
+          date.add(1, "days") 
         ) {
           if (date.day() === 6 || date.day() === 0) {
             isSandwich = true;
@@ -201,7 +201,7 @@ const ApplyLeave = () => {
       setFormData((prevFormData) => ({
         ...prevFormData,
         leavetype: leaveType,
-        issandwich: isSandwich ? "Yes" : "No",
+        issandwich: isSandwich ? "Yes" : "No",    
         noofdays: numOfDays,
       }));
     } else {
@@ -265,7 +265,7 @@ const ApplyLeave = () => {
 
         if (response.status === 200) {
           Swal.fire({
-            position: "top-center",
+            position: "top-center", 
             icon: "success",
             title: "Leave request sent successfully",
             showConfirmButton: false,
@@ -286,8 +286,7 @@ const ApplyLeave = () => {
 
   const options = [
     { label: "sankalp@ycstech.in", value: "sankalp@ycstech.in" },
-    { label: "kartik@ycstech.in", value: "kartik@ycstech.in" },
-    { label: "design@ycstech.in", value: "design@ycstech.in" },
+    { label: "kartik@ycstech.in", value: "kartik@ycstech.in" },  
   ];
 
   return (
@@ -330,7 +329,7 @@ const ApplyLeave = () => {
                   </option>
                   <option value="Sick Leave">Sick Leave</option>
                   <option value="Casual Leave">Casual Leave</option>
-                  <option value="Personal Leave">Personal Leave</option>
+                  <option value="Personal Leave">Personal Leave</option> 
                 </select>
                 {error.leavecategory && (
                   <span className="text-red-500">{error.leavecategory}</span>
@@ -442,5 +441,4 @@ const ApplyLeave = () => {
     </>
   );
 };
-
 export default ApplyLeave;
